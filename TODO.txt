@@ -1,0 +1,17 @@
+Maps and levels
+Rooms and areas connected with doors/passages
+boundaries like walls/water
+
+Player
+Done in class: movement, collision, movement, health
+TODO: inventory, attack modes
+
+Game objects
+sprites,
+invetory object classes
+triggers (like doors, chests, etc.)
+
+Enemies
+basic AI
+attack 
+health
