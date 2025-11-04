@@ -10,10 +10,10 @@ class Map:
         self.data = []
 
         # load map from file, using 'with' to ensure file is closed after reading
-        with open(filename, "rt") as f:
+        with open(filename, "rt") as f1:
 
             # read each line from the file, strip whitespace, and append to data list
-            for line in f:
+            for line in f1:
                 self.data.append(line.strip())
 
             # set map dimensions based on data
@@ -22,9 +22,8 @@ class Map:
             self.tileheight = len(self.data)
             self.width = self.tilewidth * 32
             self.height = self.tileheight * 32
-        
-        self.discovered = [[False for _ in range(self.tilewidth)] for _ in range(self.tileheight)]
-    
+
+
     def load_map(self, filename):
         # for line in self.data:
         #     for tile in line:
@@ -38,6 +37,17 @@ class Map:
         #         if tile == '.':
         #             print("Empty space found")
         #             # do nothing
+        with open(filename + "discovered", "rt") as f2:
+            self.discovered = []
+            for line in f2:
+                for char in line:
+                    temp = []
+                    if char == '1':
+                        temp.append(True)
+                    else:
+                        temp.append(False)
+                    self.discovered.append(temp)
+
         for i in range(len(self.data)):
             for j in range(len(self.data[i])):
                 if not self.discovered[i][j]:
@@ -86,4 +96,6 @@ class SpriteSheet:
         image.blit(self.spritesheet, (0,0), (x,y, width, height))
         image = pg.transform.scale(image, (width // 2, height // 2))
         return image
+
+
     

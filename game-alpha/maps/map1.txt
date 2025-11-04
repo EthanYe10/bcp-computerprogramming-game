@@ -1,0 +1,2 @@
+# this file is used to store the map of the game
+# it contains all sorts of letters in a grid
