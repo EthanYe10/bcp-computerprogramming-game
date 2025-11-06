@@ -1,6 +1,8 @@
 # resolution of each tile
 TILESIZE = 32
 
+PLAYER_SPEED = 10
+
 # default colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
