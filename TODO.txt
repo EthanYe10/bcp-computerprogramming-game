@@ -4,7 +4,7 @@ boundaries like walls/water
 
 Player
 Done in class: movement, collision, movement, health
-TODO: inventory, attack modes
+TODO: inventory
 
 Game objects
 sprites,
@@ -13,5 +13,4 @@ triggers (like doors, chests, etc.)
 
 Enemies
 basic AI
-attack 
-health
+attack
