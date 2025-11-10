@@ -6,10 +6,12 @@ vec = pg.math.Vector2
 class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((32, 32))
+        self.image = pg.Surface((settings.PLAYER_SIZE, settings.PLAYER_SIZE))
         self.image.fill(settings.WHITE)  # Green color for player
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
+
+        self.game = game
 
         #Stores which screen of the map its on.
         self.mapX = 0
@@ -40,19 +42,24 @@ class Player(pg.sprite.Sprite):
         self.rect.y += self.vel.y
         print(self.rect.x, self.rect.y)
 
-class DelayScreen(pg.sprite.Sprite):
-    def __init__(self, game):
+        if not (self.vel.x == 0 and self.vel.y == 0): #If the player is moving, create a fading rectangle for trail effect.
+            fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE)
+            self.game.all_sprites.add(fr) #Add to all_sprites group
+            self.game.effect_sprites.add(fr) #Add to effect_sprites group
+        
+#Fading rectangle
+class FadeRect(pg.sprite.Sprite):
+    def __init__(self, game, color, decayRate, xLocation, yLocation, xSize, ySize):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT), pg.SRCALPHA) 
-        #pg.SRCALPHA allows this sprite to have an alpha channel. https://www.pygame.org/docs/ref/surface.html
-        self.image.fill(settings.WHITE_OPAQUE)  # White color for player
+        self.image = pg.Surface((xSize, ySize), pg.SRCALPHA) #pg.SRCALPHA allows there to be an alpha channel in the image
+        self.image.fill(color)  #Color of the rectangle
         self.rect = self.image.get_rect()
-        self.rect.topleft = (0, 0) #Go to top left of screen
+        self.rect.topleft = (xLocation, yLocation)
 
-        #A clear image for the sprite image to crossfade into 
-        #This is required to avoid round tripping the sprite to the cpu to edit specific pixels
-        self.clearImage = pg.Surface((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT), pg.SRCALPHA) 
-        self.clearImage.fill(settings.TRANSPARANT)
-
+        self.decayRate = decayRate
+    
     def update(self):
-        self.clearImage.blit(self.image, (0,0), special_flags=pg.BLEND_MULT)
+        if not self.image.get_alpha() < self.decayRate: #If the current alpha of the image is not lower than the decay rate
+            self.image.set_alpha(self.image.get_alpha()-self.decayRate) #Fade out by set decayRate
+        else:
+            self.kill() #kill self once faded.

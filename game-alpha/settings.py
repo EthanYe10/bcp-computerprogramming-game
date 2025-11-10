@@ -3,6 +3,9 @@ TILESIZE = 32
 
 PLAYER_SPEED = 10
 
+PLAYER_SIZE = 32
+PLAYER_TRAIL_DECAY_RATE = 2
+
 # default colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
