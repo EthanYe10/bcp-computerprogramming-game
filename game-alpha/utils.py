@@ -195,9 +195,4 @@ def write_data_at_position(filename, data, x, y):
     first deletes data at that position as well as the following data on that line 
     does this in order to replace data at the position
     author: Ethan Ye"""
-    with open(filename, "r") as f:
-        lines = f.readlines()
-    lines[x] = data[y] + "\n"
-    with open(filename, "w") as f:
-        f.writelines(lines)
-        
+    pass
