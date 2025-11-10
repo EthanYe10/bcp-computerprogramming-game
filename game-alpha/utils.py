@@ -164,5 +164,40 @@ class SpriteSheet:
         image = pg.transform.scale(image, (width // 2, height // 2))
         return image
 
+def read_data(filename):
+    """read data from a file and returns it as an array of strings
+    author: Ethan Ye
+    """
+    data = []
+    with open(filename, "r") as f:
+        for line in f:
+            data.append(line.strip())
+    return data
 
-    
+def write_data(filename, data):
+    """write data to a file and also truncates the file
+    author: Ethan Ye
+    """
+    with open(filename, "w") as f:
+        for line in data:
+            f.write(line + "\n")
+
+def append_data(filename, data):
+    """append data to a file
+    author: Ethan Ye
+    """
+    with open(filename, "a") as f:
+        for line in data:
+            f.write(line + "\n")
+
+def write_data_at_position(filename, data, x, y):
+    """writes data to a specific positiom
+    first deletes data at that position as well as the following data on that line 
+    does this in order to replace data at the position
+    author: Ethan Ye"""
+    with open(filename, "r") as f:
+        lines = f.readlines()
+    lines[x] = data[y] + "\n"
+    with open(filename, "w") as f:
+        f.writelines(lines)
+        
