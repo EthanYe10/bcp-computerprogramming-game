@@ -20,6 +20,10 @@ class Game:
 
         self.deltaTime = 0
         g.clock = pg.time.Clock()
+
+        ds = DelayScreen(self)
+        self.all_sprites.add(ds)
+
     def input(self):
         for sprite in self.all_inputSprites:
             sprite.input()
