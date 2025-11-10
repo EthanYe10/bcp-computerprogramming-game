@@ -32,8 +32,27 @@ class Player(pg.sprite.Sprite):
 
         #Slow down diagonal movement.
 
+    #def screenTransition():
+
     def update(self):
         #Move based on self.vel vector based on input
         self.rect.x += self.vel.x
         self.rect.y += self.vel.y
         print(self.rect.x, self.rect.y)
+
+class DelayScreen(pg.sprite.Sprite):
+    def __init__(self, game):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT), pg.SRCALPHA) 
+        #pg.SRCALPHA allows this sprite to have an alpha channel. https://www.pygame.org/docs/ref/surface.html
+        self.image.fill(settings.WHITE_OPAQUE)  # White color for player
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (0, 0) #Go to top left of screen
+
+        #A clear image for the sprite image to crossfade into 
+        #This is required to avoid round tripping the sprite to the cpu to edit specific pixels
+        self.clearImage = pg.Surface((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT), pg.SRCALPHA) 
+        self.clearImage.fill(settings.TRANSPARANT)
+
+    def update(self):
+        self.clearImage.blit(self.image, (0,0), special_flags=pg.BLEND_MULT)
