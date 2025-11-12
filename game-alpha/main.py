@@ -15,6 +15,8 @@ class Game:
 
         self.effect_sprites = pg.sprite.Group() #Sprite group for visual effects related sprites
 
+        self.item_sprites = pg.sprite.Group() #Sprite group for items 
+
         #Instantiate Player, add to sprite groups.
         p = Player(self, 200, 200)
         self.input_sprites.add(p)
@@ -23,6 +25,12 @@ class Game:
         #Create delta time and pg.Clock attributes.
         self.deltaTime = 0
         g.clock = pg.time.Clock()
+
+        #Create item classes
+        img = pg.image.load("images\\blackKey.png").convert_alpha()
+        itm = Item(self, img, 200, 200, 0, 0, settings.ITEM_TYPE_KEY_BLACK)
+        self.all_sprites.add(itm)
+        self.item_sprites.add(itm)
 
     def input(self):
         for sprite in self.input_sprites:

@@ -17,6 +17,8 @@ class Player(pg.sprite.Sprite):
         self.mapX = 0
         self.mapY = 0
 
+        self.inventory = []
+
     def input(self):
         self.vel = pg.Vector2() #Velocity vector
 
@@ -89,4 +91,18 @@ class BasicBullet(Projectile):
         super().__init__(game, playerVelocity, WHITE, 20, 3, x, y, 5)
     
     def update():
+        pass
+
+class Item(pg.sprite.Sprite):
+    def __init__(self, game, itemImage, x, y, mapX, mapY, itemType):
+        pg.sprite.Sprite.__init__(self)
+        self.image = itemImage #Image representing the item
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+        self.mapX = mapX
+        self.mapY = mapY
+        
+        self.itemType = itemType
+    def update(self):
         pass
