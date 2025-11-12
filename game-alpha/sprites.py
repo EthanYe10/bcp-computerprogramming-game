@@ -63,3 +63,30 @@ class FadeRect(pg.sprite.Sprite):
             self.image.set_alpha(self.image.get_alpha()-self.decayRate) #Fade out by set decayRate
         else:
             self.kill() #kill self once faded.
+
+class Projectile(pg.sprite.Sprite):
+    def __init__(self, game, playerVelocity, color, speed, countdownSeconds, xLocation, yLocation, size):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((size, size))
+        self.image.fill(color)  #Color of the rectangle
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (xLocation, yLocation)
+
+        self.game = game #Reference to the game to detect collidable entities
+
+        #Create bullet's vector
+        self.velocity = playerVelocity #Set to playerVelocity
+
+        #Divide by PLAYER_SPEED (to make all members 1), multiply by speed to get bullet velocity.
+        self.velocity.x = (self.velocity.x/PLAYER_SPEED)*speed
+        self.velocity.y = (self.velocity.y/PLAYER_SPEED)*speed
+
+        #Doing it this way preserves the direction of the velocity.
+        
+class BasicBullet(Projectile):
+    def __init__(self, game, playerVelocity, x, y):
+        #Construct bullet with parameters of this type of bullet:
+        super().__init__(game, playerVelocity, WHITE, 20, 3, x, y, 5)
+    
+    def update():
+        pass
