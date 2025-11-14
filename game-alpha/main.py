@@ -13,14 +13,14 @@ class Game:
 
         self.input_sprites = pg.sprite.Group() #Sprite group which contains all sprites with input() from the user
 
-        self.effect_sprites = pg.sprite.Group() #Sprite group for visual effects related sprites
-
         self.item_sprites = pg.sprite.Group() #Sprite group for items 
 
+        self.effect_sprites = pg.sprite.Group() #Sprite group for visual effects related sprites
+
         #Instantiate Player, add to sprite groups.
-        p = Player(self, 200, 200)
-        self.input_sprites.add(p)
-        self.all_sprites.add(p)
+        self.player = Player(self, 200, 200) #Store player reference for later access
+        self.input_sprites.add(self.player)
+        self.all_sprites.add(self.player)
 
         #Create delta time and pg.Clock attributes.
         self.deltaTime = 0
@@ -41,7 +41,10 @@ class Game:
             sprite.update()
     def draw(self):
         self.screen.fill(settings.BLUE)
-        self.all_sprites.draw(self.screen)
+        #Draw sprites in specific order to prevent layering issues.
+        self.effect_sprites.draw(self.screen)
+        self.input_sprites.draw(self.screen)
+        self.item_sprites.draw(self.screen)
         pg.display.flip()
 
 g = Game()

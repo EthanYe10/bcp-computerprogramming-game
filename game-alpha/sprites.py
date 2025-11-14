@@ -27,12 +27,18 @@ class Player(pg.sprite.Sprite):
 
         if keystate[pg.K_w]: #Check if w is pressed.
             self.vel.y -= settings.PLAYER_SPEED
-        if keystate[pg.K_s]: #Check if w is pressed.
+        if keystate[pg.K_s]: #Check if s is pressed.
             self.vel.y += settings.PLAYER_SPEED
-        if keystate[pg.K_d]: #Check if w is pressed.
+        if keystate[pg.K_d]: #Check if d is pressed.
             self.vel.x += settings.PLAYER_SPEED
-        if keystate[pg.K_a]: #Check if w is pressed.
+        if keystate[pg.K_a]: #Check if a is pressed.
             self.vel.x -= settings.PLAYER_SPEED
+
+        if keystate[pg.K_e]: #Pick up nearby item
+            hits = pg.sprite.spritecollide(self, self.game.item_sprites, False) #Returns list of item sprites touching player
+            #from https://www.pygame.org/docs/ref/sprite.html#pygame.sprite.spritecollide
+            if len(hits) > 0: #Check the length of the list to prevent index out of range error
+                self.inventory.append(hits[0]) #Adds the first item returned into the inventory.
 
         #Slow down diagonal movement.
 
@@ -43,6 +49,7 @@ class Player(pg.sprite.Sprite):
         self.rect.x += self.vel.x
         self.rect.y += self.vel.y
         print(self.rect.x, self.rect.y)
+        print(self.inventory)
 
         if not (self.vel.x == 0 and self.vel.y == 0): #If the player is moving, create a fading rectangle for trail effect.
             fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE)
@@ -104,5 +111,9 @@ class Item(pg.sprite.Sprite):
         self.mapY = mapY
         
         self.itemType = itemType
+        self.game = game
+
     def update(self):
-        pass
+        #If in player's inventory, go to player's location.
+        if self in self.game.player.inventory:
+            self.rect.topleft = (self.game.player.rect.x,self.game.player.rect.y)
