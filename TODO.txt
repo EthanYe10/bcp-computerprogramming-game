@@ -14,3 +14,9 @@ triggers (like doors, chests, etc.)
 Enemies
 basic AI
 attack
+
+ITEMS
+2 item inventory
+display inventory by making it follow player/put on hud
+
+
