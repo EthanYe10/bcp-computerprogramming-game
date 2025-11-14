@@ -17,7 +17,8 @@ class Player(pg.sprite.Sprite):
         self.mapX = 0
         self.mapY = 0
 
-        self.inventory = []
+        self.inventory = pg.sprite.Group() #Inintialize inventory (a sprite group of item sprites)
+        self.currentItem = 0 #Set current item to 0.
 
     def input(self):
         self.vel = pg.Vector2() #Velocity vector
@@ -34,14 +35,24 @@ class Player(pg.sprite.Sprite):
         if keystate[pg.K_a]: #Check if a is pressed.
             self.vel.x -= settings.PLAYER_SPEED
 
+        #Slow down diagonal movement.
+
         if keystate[pg.K_e]: #Pick up nearby item
             hits = pg.sprite.spritecollide(self, self.game.item_sprites, False) #Returns list of item sprites touching player
             #from https://www.pygame.org/docs/ref/sprite.html#pygame.sprite.spritecollide
             if len(hits) > 0: #Check the length of the list to prevent index out of range error
-                self.inventory.append(hits[0]) #Adds the first item returned into the inventory.
+                self.inventory.add(hits[0]) #Adds the first item returned into the inventory.
 
-        #Slow down diagonal movement.
+        if keystate[pg.K_q]: #Switch to next item in inventory
+            self.currentItem += 1
+            if self.currentItem == len(self.inventory): #If at the amount of items in inventory, loop around to first item.
+                self.currentItem = 0
 
+        if keystate[pg.K_r]: #Drop held item
+            for i, sprite in enumerate(self.inventory):
+                if i == self.currentItem: #Find current item in inventory
+                    self.inventory.remove(sprite) #Remove the item from inventory
+            
     #def screenTransition():
 
     def update(self):
@@ -50,6 +61,7 @@ class Player(pg.sprite.Sprite):
         self.rect.y += self.vel.y
         print(self.rect.x, self.rect.y)
         print(self.inventory)
+        print(self.currentItem)
 
         if not (self.vel.x == 0 and self.vel.y == 0): #If the player is moving, create a fading rectangle for trail effect.
             fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE)
