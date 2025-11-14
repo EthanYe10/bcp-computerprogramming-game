@@ -7,7 +7,7 @@ class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((settings.PLAYER_SIZE, settings.PLAYER_SIZE))
-        self.image.fill(settings.WHITE)  # Green color for player
+        self.image.fill(settings.WHITE)  #White color for player
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
@@ -77,7 +77,7 @@ class FadeRect(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (xLocation, yLocation)
 
-        self.decayRate = decayRate
+        self.decayRate = decayRate #amount by which alpha is of the rectangle decreased, per frame
     
     def update(self):
         if not self.image.get_alpha() < self.decayRate: #If the current alpha of the image is not lower than the decay rate

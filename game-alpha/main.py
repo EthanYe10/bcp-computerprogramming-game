@@ -31,12 +31,13 @@ class Game:
         itm = Item(self, img, 200, 200, 0, 0, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
-
     def input(self):
+        #Loop through all sprites that take input and scan for input.
         for sprite in self.input_sprites:
             sprite.input()
         pass
     def update(self):
+        #run update function of all sprites
         for sprite in self.all_sprites:
             sprite.update()
     def draw(self):
