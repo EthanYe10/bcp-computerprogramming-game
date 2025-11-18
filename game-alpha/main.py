@@ -26,11 +26,26 @@ class Game:
         self.deltaTime = 0
         g.clock = pg.time.Clock()
 
-        #Create item classes
+        #Create items:
+
+        #Red key
         img = pg.image.load("images\\blackKey.png").convert_alpha()
         itm = Item(self, img, 200, 200, 0, 0, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
+
+        #Black key
+        img = pg.image.load("images\\redKey.png").convert_alpha()
+        itm = Item(self, img, 300, 300, 0, 0, settings.ITEM_TYPE_KEY_BLACK)
+        self.all_sprites.add(itm)
+        self.item_sprites.add(itm)
+
+        #Yellow Key
+        img = pg.image.load("images\\yellowKey.png").convert_alpha()
+        itm = Item(self, img, 400, 400, 0, 0, settings.ITEM_TYPE_KEY_BLACK)
+        self.all_sprites.add(itm)
+        self.item_sprites.add(itm)
+
     def input(self):
         #Loop through all sprites that take input and scan for input.
         for sprite in self.input_sprites:
