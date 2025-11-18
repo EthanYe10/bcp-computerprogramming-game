@@ -34,8 +34,7 @@ class Map:
                     return (i, j)
         return None
 
-    def load_map(self, filename):
-        pass
+    
                 
 
 class MapConnection:

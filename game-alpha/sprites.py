@@ -4,6 +4,10 @@ import settings
 vec = pg.math.Vector2
 
 class Player(pg.sprite.Sprite):
+    """Player class
+    Author: Matthew Sheyda
+    TODO: short description
+    """
     def __init__(self, game, x, y):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((settings.PLAYER_SIZE, settings.PLAYER_SIZE))
@@ -58,6 +62,10 @@ class Player(pg.sprite.Sprite):
         
 #Fading rectangle
 class FadeRect(pg.sprite.Sprite):
+    """FadeRect class
+    Author: Matthew Sheyda
+    TODO: short description
+    """
     def __init__(self, game, color, decayRate, xLocation, yLocation, xSize, ySize):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((xSize, ySize), pg.SRCALPHA) #pg.SRCALPHA allows there to be an alpha channel in the image
@@ -74,6 +82,10 @@ class FadeRect(pg.sprite.Sprite):
             self.kill() #kill self once faded.
 
 class Projectile(pg.sprite.Sprite):
+    """Projectile class
+    Author: Matthew Sheyda
+    TODO: short description
+    """
     def __init__(self, game, playerVelocity, color, speed, countdownSeconds, xLocation, yLocation, size):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((size, size))
@@ -101,6 +113,10 @@ class BasicBullet(Projectile):
         pass
 
 class Item(pg.sprite.Sprite):
+    """Item class
+    Author: Matthew Sheyda
+    TODO: short description
+    """
     def __init__(self, game, itemImage, x, y, mapX, mapY, itemType):
         pg.sprite.Sprite.__init__(self)
         self.image = itemImage #Image representing the item
@@ -117,3 +133,23 @@ class Item(pg.sprite.Sprite):
         #If in player's inventory, go to player's location.
         if self in self.game.player.inventory:
             self.rect.topleft = (self.game.player.rect.x,self.game.player.rect.y)
+
+class Wall(pg.sprite.Sprite):
+    """
+    Wall class
+    adapted from class code by Ethan Ye to include wall colors
+    """
+    def __init__(self, game, x, y, color):
+        self.game = game
+        self.groups = game.all_sprites, game.walls
+        pg.sprite.Sprite.__init__(
+            self, self.groups
+        )  # initialize Wall using Sprite class init function
+
+        # wall properties
+        self.image = pg.Surface(TILESIZE)
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+        self.rect.x = x * TILESIZE[0]
+        self.rect.y = y * TILESIZE[1]
+
