@@ -147,9 +147,9 @@ class Wall(pg.sprite.Sprite):
         )  # initialize Wall using Sprite class init function
 
         # wall properties
-        self.image = pg.Surface(TILESIZE)
+        self.image = pg.Surface((settings.TILESIZE, settings.TILESIZE))
         self.image.fill(color)
         self.rect = self.image.get_rect()
-        self.rect.x = x * TILESIZE[0]
-        self.rect.y = y * TILESIZE[1]
+        self.rect.x = x * settings.TILESIZE
+        self.rect.y = y * settings.TILESIZE
 

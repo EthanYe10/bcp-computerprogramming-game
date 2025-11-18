@@ -2,6 +2,7 @@ import pygame as pg
 import settings
 import utils
 from sprites import *
+import os
 
 class Game:
     def __init__(self):
@@ -11,8 +12,8 @@ class Game:
         self.map_manager: utils.MapManager = utils.MapManager()
 
     def new(self): #Create a new game, sprites, and maps. 
-        self.map1_1 = utils.Map("maps\map1_1.txt")
-        self.map1_2 = utils.Map("maps\map1_2.txt")
+        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map1_1.txt"))
+        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map1_2.txt"))
 
         self.map_manager.add_map(self.map1_1)
         self.map_manager.add_map(self.map1_2)
@@ -49,10 +50,11 @@ class Game:
         g.clock = pg.time.Clock()
 
         #Create item classes
-        img = pg.image.load("images\\blackKey.png").convert_alpha()
-        itm = Item(self, img, 200, 200, 0, 0, settings.ITEM_TYPE_KEY_BLACK)
-        self.all_sprites.add(itm)
-        self.item_sprites.add(itm)
+        # img = pg.image.load(os.path.join("game-alpha", "images", "blackKey.png")).convert_alpha()
+        # itm = Item(self, img, 200, 200, 0, 0, settings.ITEM_TYPE_KEY_BLACK)
+        # self.all_sprites.add(itm)
+        # self.item_sprites.add(itm)
+        self.load_map(self.current_map)
 
     def input(self):
         for sprite in self.input_sprites:
@@ -67,6 +69,7 @@ class Game:
         self.effect_sprites.draw(self.screen)
         self.input_sprites.draw(self.screen)
         self.item_sprites.draw(self.screen)
+        self.walls.draw(self.screen)
         pg.display.flip()
 
     def clear_map(self):
@@ -82,21 +85,21 @@ class Game:
         Checks if player is within the "door zone" of the current map and assign next_map to the next map if applicable, None if not. 
         Teleports player to the other map and updates and loads the next map
         Author: Ethan Ye"""
-        next_map = self.map_manager.get_connected_map(self.current_map, self.player.rect.x//settings.TILE_SIZE, self.player.rect.y//settings.TILE_SIZE)
+        next_map = self.map_manager.get_connected_map(self.current_map, self.player.rect.x//settings.TILESIZE, self.player.rect.y//settings.TILESIZE)
         if next_map and next_map != self.current_map:
             self.clear_map()
             self.load_map(next_map)
             self.current_map = next_map
-            self.player.rect.x = next_map.map2x1 * settings.TILE_SIZE
-            self.player.rect.y = next_map.map2y1 * settings.TILE_SIZE
+            self.player.rect.x = next_map.map2x1 * settings.TILESIZE
+            self.player.rect.y = next_map.map2y1 * settings.TILESIZE
 
     def load_map(self, map : utils.Map):
         """
         Loads the sprites and data from a Map object's data attribute
         Adapted from class Game
         Author: Ethan Ye"""
-        for row, tile in enumerate(map.data):
-            for col, tile in enumerate(row):
+        for row, tiles in enumerate(map.data):
+            for col, tile in enumerate(tiles):
                 if tile == "1":
                     _ = Wall(self, col, row, settings.LIGHT_GRAY)
                 if tile == "2":
