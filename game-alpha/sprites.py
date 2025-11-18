@@ -25,6 +25,11 @@ class Player(pg.sprite.Sprite):
         self.Rpressed = False
         self.Qpressed = False
 
+    def getHeldItem(self):
+        for i, sprite in enumerate(self.inventory): #enumerate items in inventory
+            if i == self.currentItem: #check if current item is the held item
+                return sprite #If so, return the held item
+
     def input(self):
         self.vel = pg.Vector2() #Velocity vector
 
@@ -49,22 +54,28 @@ class Player(pg.sprite.Sprite):
             for item in hits:
                 if not item in self.inventory: #Avoid items already in inventory
                     self.inventory.add(item) #Add first item found
+                    self.currentItem = len(self.inventory) - 1 #Immediatly set current item to the new item
                     break #Prevent picking up several items at once
         
         if not keystate[pg.K_e]:
             self.Epressed = False #If e isnt pressed anymore, set e pressed to false.
 
-        if keystate[pg.K_q]: #Switch to next item in inventory
+        if keystate[pg.K_q] and not self.Qpressed: #Switch to next item in inventory
+            self.Qpressed = True #Q is now pressed
             self.currentItem += 1
-            if self.currentItem == len(self.inventory): #If at the amount of items in inventory, loop around to first item.
+            if self.currentItem >= len(self.inventory): #If at the amount of items in inventory, loop around to first item.
                 self.currentItem = 0
+
+        if not keystate[pg.K_q]:
+            self.Qpressed = False #If q isnt pressed anymore, set q pressed to false.
 
         if keystate[pg.K_r] and not self.Rpressed: #Drop held item
             self.Rpressed = True #R is now pressed
-            for i, sprite in enumerate(self.inventory):
-                if i == self.currentItem: #Find current item in inventory
-                    self.inventory.remove(sprite) #Remove the item from inventory
-                    break
+            self.inventory.remove(self.getHeldItem())
+
+            #If player was on the last item of inventory and their is no longer an item at current item, decrement.
+            if self.currentItem == len(self.inventory) and not self.currentItem == 0: #if currentItem is 0, it will stay so 
+                self.currentItem -= 1
 
         if not keystate[pg.K_r]:
             self.Rpressed = False #If r isnt pressed anymore, set r pressed to false.
@@ -76,7 +87,7 @@ class Player(pg.sprite.Sprite):
         self.rect.x += self.vel.x
         self.rect.y += self.vel.y
         #print(self.rect.x, self.rect.y)
-        print(len(self.inventory))
+        print("Inventory: Length:", len(self.inventory), "Current:", self.currentItem)
         #print(self.currentItem)
 
         if not (self.vel.x == 0 and self.vel.y == 0): #If the player is moving, create a fading rectangle for trail effect.
@@ -131,6 +142,11 @@ class BasicBullet(Projectile):
 class Item(pg.sprite.Sprite):
     def __init__(self, game, itemImage, x, y, mapX, mapY, itemType):
         pg.sprite.Sprite.__init__(self)
+        self.itemImage = itemImage
+
+        self.clearImage = self.image = pg.Surface((16, 16), pg.SRCALPHA) #pg.SRCALPHA allows transparancy
+        self.clearImage.fill(settings.TRANSPARANT)
+
         self.image = itemImage #Image representing the item
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
@@ -145,3 +161,14 @@ class Item(pg.sprite.Sprite):
         #If in player's inventory, go to player's location.
         if self in self.game.player.inventory:
             self.rect.topleft = (self.game.player.rect.x,self.game.player.rect.y)
+                
+        #Determine if the item should be drawn, hide by setting image to clearImage
+        if self in self.game.player.inventory:
+            #Items in inventory should only be visible when held
+            if self.game.player.getHeldItem() == self:
+                self.image = self.itemImage
+            else: 
+                self.image = self.clearImage
+        else:
+            #Item should be visible if not in inventory
+            self.image = self.itemImage
