@@ -20,8 +20,10 @@ class Game:
 
         self.map_manager.add_connection(utils.MapConnection(
             self.map1_1, self.map1_2, # the two maps
-            0, 0, 10, 10, # the coordinates of the door on the first map, in tiles
-            0, 0, 10, 10, # the coordinates of the door on the second map, in tiles
+            24, 0,   # start of door of first map
+            24, 17, # end of door of first map
+            0, 0,   # start of door of second map
+            0, 17, # end of door of second map
             "right")) # the direction the player will be facing when entering the door
         """
         in this example the door will be at (0,0) to (10,10) on the first map and (0,0) to (10,10) on the second map
@@ -48,6 +50,8 @@ class Game:
         #Create delta time and pg.Clock attributes.
         self.deltaTime = 0
         g.clock = pg.time.Clock()
+        
+        self.map_transition_countdown = utils.Countdown(500) # 500 ms countdown for map transitions
 
         #Create item classes
         # img = pg.image.load(os.path.join("game-alpha", "images", "blackKey.png")).convert_alpha()
@@ -61,8 +65,10 @@ class Game:
             sprite.input()
         pass
     def update(self):
+        print(self.player.rect.x // settings.TILESIZE, self.player.rect.y // settings.TILESIZE)
         for sprite in self.all_sprites:
             sprite.update()
+        self.check_map_transitions()
     def draw(self):
         self.screen.fill(settings.BLUE)
         #Draw sprites in specific order to prevent layering issues.
@@ -85,13 +91,19 @@ class Game:
         Checks if player is within the "door zone" of the current map and assign next_map to the next map if applicable, None if not. 
         Teleports player to the other map and updates and loads the next map
         Author: Ethan Ye"""
-        next_map = self.map_manager.get_connected_map(self.current_map, self.player.rect.x//settings.TILESIZE, self.player.rect.y//settings.TILESIZE)
+        
+        if self.map_transition_countdown.running():
+            return
+        self.map_transition_countdown.start()
+        next_map, spawnX, spawnY = self.map_manager.get_connected_map(self.current_map, self.player.rect.x//settings.TILESIZE, self.player.rect.y//settings.TILESIZE)
         if next_map and next_map != self.current_map:
+            print("Transitioning to map:", next_map.filename)
+            print('Player', self.player.rect.x // settings.TILESIZE, self.player.rect.y // settings.TILESIZE)
             self.clear_map()
             self.load_map(next_map)
             self.current_map = next_map
-            self.player.rect.x = next_map.map2x1 * settings.TILESIZE
-            self.player.rect.y = next_map.map2y1 * settings.TILESIZE
+            self.player.rect.x = spawnX * settings.TILESIZE
+            self.player.rect.y = spawnY * settings.TILESIZE
 
     def load_map(self, map : utils.Map):
         """
