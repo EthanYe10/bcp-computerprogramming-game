@@ -52,8 +52,17 @@ class Player(pg.sprite.Sprite):
         #Move based on self.vel vector based on input
         self.rect.x += self.vel.x
         self.rect.y += self.vel.y
-        print(self.rect.x, self.rect.y)
-        print(self.inventory)
+        
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > settings.WINDOW_WIDTH:
+            self.rect.right = settings.WINDOW_WIDTH
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > settings.WINDOW_HEIGHT:
+            self.rect.bottom = settings.WINDOW_HEIGHT
+        # print(self.rect.x // settings.TILESIZE, self.rect.y // settings.TILESIZE)
+        # print(self.inventory)
 
         if not (self.vel.x == 0 and self.vel.y == 0): #If the player is moving, create a fading rectangle for trail effect.
             fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE)
@@ -99,15 +108,15 @@ class Projectile(pg.sprite.Sprite):
         self.velocity = playerVelocity #Set to playerVelocity
 
         #Divide by PLAYER_SPEED (to make all members 1), multiply by speed to get bullet velocity.
-        self.velocity.x = (self.velocity.x/PLAYER_SPEED)*speed
-        self.velocity.y = (self.velocity.y/PLAYER_SPEED)*speed
+        self.velocity.x = (self.velocity.x/settings.PLAYER_SPEED)*speed
+        self.velocity.y = (self.velocity.y/settings.PLAYER_SPEED)*speed
 
         #Doing it this way preserves the direction of the velocity.
         
 class BasicBullet(Projectile):
     def __init__(self, game, playerVelocity, x, y):
         #Construct bullet with parameters of this type of bullet:
-        super().__init__(game, playerVelocity, WHITE, 20, 3, x, y, 5)
+        super().__init__(game, playerVelocity, settings.WHITE, 20, 3, x, y, 5)
     
     def update():
         pass
