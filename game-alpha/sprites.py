@@ -4,6 +4,10 @@ import settings
 vec = pg.math.Vector2
 
 class Player(pg.sprite.Sprite):
+    """Player class
+    Author: Matthew Sheyda
+    TODO: short description
+    """
     def __init__(self, game, x, y):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((settings.PLAYER_SIZE, settings.PLAYER_SIZE))
@@ -95,6 +99,18 @@ class Player(pg.sprite.Sprite):
         #print(self.rect.x, self.rect.y)
         print("Inventory: Length:", len(self.inventory), "Current:", self.currentItem)
         #print(self.currentItem)
+        
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > settings.WINDOW_WIDTH:
+            self.rect.right = settings.WINDOW_WIDTH
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > settings.WINDOW_HEIGHT:
+            self.rect.bottom = settings.WINDOW_HEIGHT
+        # print(self.rect.x // settings.TILESIZE, self.rect.y // settings.TILESIZE)
+        # print(self.inventory)
+
         if not (self.vel.x == 0 and self.vel.y == 0): #If the player is moving, create a fading rectangle for trail effect.
             fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE)
             self.game.all_sprites.add(fr) #Add to all_sprites group
@@ -102,6 +118,10 @@ class Player(pg.sprite.Sprite):
         
 #Fading rectangle
 class FadeRect(pg.sprite.Sprite):
+    """FadeRect class
+    Author: Matthew Sheyda
+    TODO: short description
+    """
     def __init__(self, game, color, decayRate, xLocation, yLocation, xSize, ySize):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((xSize, ySize), pg.SRCALPHA) #pg.SRCALPHA allows there to be an alpha channel in the image
@@ -118,6 +138,10 @@ class FadeRect(pg.sprite.Sprite):
             self.kill() #kill self once faded.
 
 class Projectile(pg.sprite.Sprite):
+    """Projectile class
+    Author: Matthew Sheyda
+    TODO: short description
+    """
     def __init__(self, game, playerVelocity, color, speed, countdownSeconds, xLocation, yLocation, size):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((size, size))
@@ -133,6 +157,8 @@ class Projectile(pg.sprite.Sprite):
         self.velocity = pg.Vector2()
         self.velocity.x = (playerVelocity.x/settings.PLAYER_SPEED)*speed
         self.velocity.y = (playerVelocity.y/settings.PLAYER_SPEED)*speed
+        self.velocity.x = (self.velocity.x/settings.PLAYER_SPEED)*speed
+        self.velocity.y = (self.velocity.y/settings.PLAYER_SPEED)*speed
 
         #Doing it this way preserves the direction of the velocity.
 
@@ -144,8 +170,19 @@ class Projectile(pg.sprite.Sprite):
 
         if self.countdownSeconds < 0:
             self.kill() #Kill self once countdown ends
+class BasicBullet(Projectile):
+    def __init__(self, game, playerVelocity, x, y):
+        #Construct bullet with parameters of this type of bullet:
+        super().__init__(game, playerVelocity, settings.WHITE, 20, 3, x, y, 5)
+    
+    def update():
+        pass
 
 class Item(pg.sprite.Sprite):
+    """Item class
+    Author: Matthew Sheyda
+    TODO: short description
+    """
     def __init__(self, game, itemImage, x, y, mapX, mapY, itemType):
         pg.sprite.Sprite.__init__(self)
         self.itemImage = itemImage
@@ -178,3 +215,23 @@ class Item(pg.sprite.Sprite):
         else:
             #Item should be visible if not in inventory
             self.image = self.itemImage
+
+class Wall(pg.sprite.Sprite):
+    """
+    Wall class
+    adapted from class code by Ethan Ye to include wall colors
+    """
+    def __init__(self, game, x, y, color):
+        self.game = game
+        self.groups = game.all_sprites, game.walls
+        pg.sprite.Sprite.__init__(
+            self, self.groups
+        )  # initialize Wall using Sprite class init function
+
+        # wall properties
+        self.image = pg.Surface((settings.TILESIZE, settings.TILESIZE))
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+        self.rect.x = x * settings.TILESIZE
+        self.rect.y = y * settings.TILESIZE
+

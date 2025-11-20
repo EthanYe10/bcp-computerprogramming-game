@@ -34,8 +34,7 @@ class Map:
                     return (i, j)
         return None
 
-    def load_map(self, filename):
-        pass
+    
                 
 
 class MapConnection:
@@ -115,12 +114,12 @@ class MapManager:
             if (connection.map1 == map and
                 connection.map1x1 <= player_x <= connection.map1x2 and
                 connection.map1y1 <= player_y <= connection.map1y2):
-                return connection.map2
+                return connection.map2, connection.map2x1, connection.map2y1
             if (connection.map2 == map and
                 connection.map2x1 <= player_x <= connection.map2x2 and
                 connection.map2y1 <= player_y <= connection.map2y2):
-                return connection.map1
-        return None
+                return connection.map1, connection.map1x1, connection.map1y1
+        return None, None, None
     
 
 class Countdown:
