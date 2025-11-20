@@ -17,6 +17,8 @@ class Game:
 
         self.effect_sprites = pg.sprite.Group() #Sprite group for visual effects related sprites
 
+        self.projectile_sprites = pg.sprite.Group() #Sprite group for projectile sprites
+
         #Instantiate Player, add to sprite groups.
         self.player = Player(self, 200, 200) #Store player reference for later access
         self.input_sprites.add(self.player)
@@ -46,6 +48,12 @@ class Game:
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
+        #Weapon Tesla
+        img = pg.image.load("images\\weapon_tesla.png").convert_alpha()
+        itm = Item(self, img, 500, 500, 0, 0, settings.ITEM_TYPE_WEAPON_TESLA)
+        self.all_sprites.add(itm)
+        self.item_sprites.add(itm)
+
     def input(self):
         #Loop through all sprites that take input and scan for input.
         for sprite in self.input_sprites:
@@ -61,6 +69,7 @@ class Game:
         self.effect_sprites.draw(self.screen)
         self.input_sprites.draw(self.screen)
         self.item_sprites.draw(self.screen)
+        self.projectile_sprites.draw(self.screen)
         pg.display.flip()
 
 g = Game()
