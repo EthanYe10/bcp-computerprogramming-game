@@ -9,11 +9,12 @@ class Game:
         pg.init()
         self.screen = pg.display.set_mode((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT))
         # initialize map manager
-        self.map_manager: utils.MapManager = utils.MapManager()
 
     def new(self): #Create a new game, sprites, and maps. 
-        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map1_1.txt"))
-        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map1_2.txt"))
+        self.map_manager: utils.MapManager = utils.MapManager()
+
+        self.map1_1 = utils.Map(os.path.join("maps", "map1_1.txt"))
+        self.map1_2 = utils.Map(os.path.join("maps", "map1_2.txt"))
 
         self.map_manager.add_map(self.map1_1)
         self.map_manager.add_map(self.map1_2)
