@@ -56,7 +56,7 @@ class Player(pg.sprite.Sprite):
             hits = pg.sprite.spritecollide(self, self.game.item_sprites, False) #Returns list of item sprites touching player
             #from https://www.pygame.org/docs/ref/sprite.html#pygame.sprite.spritecollide
             for item in hits:
-                if not item in self.inventory: #Avoid items already in inventory
+                if not (item in self.inventory) and item.map == self.game.current_map: #Avoid items already in inventory, not in current map (thus hidden)
                     self.inventory.add(item) #Add first item found
                     self.currentItem = len(self.inventory) - 1 #Immediatly set current item to the new item
                     break #Prevent picking up several items at once
@@ -75,11 +75,15 @@ class Player(pg.sprite.Sprite):
 
         if keystate[pg.K_r] and not self.Rpressed: #Drop held item
             self.Rpressed = True #R is now pressed
+            self.getHeldItem().map = self.game.current_map #Set item map to the map it is being dropped at.
             self.inventory.remove(self.getHeldItem())
 
             #If player was on the last item of inventory and their is no longer an item at current item, decrement.
             if self.currentItem == len(self.inventory) and not self.currentItem == 0: #if currentItem is 0, it will stay so 
                 self.currentItem -= 1
+
+        if not keystate[pg.K_r]:
+            self.Rpressed = False #If r isnt pressed anymore, set q pressed to false.
 
         if keystate[pg.K_SPACE]: #Fire weaopn (If has one)
             #Check which weapon is held to determine which bullet to fire.
@@ -183,7 +187,7 @@ class Item(pg.sprite.Sprite):
     Author: Matthew Sheyda
     TODO: short description
     """
-    def __init__(self, game, itemImage, x, y, mapX, mapY, itemType):
+    def __init__(self, game, itemImage, x, y, map, itemType):
         pg.sprite.Sprite.__init__(self)
         self.itemImage = itemImage
 
@@ -194,8 +198,7 @@ class Item(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
-        self.mapX = mapX
-        self.mapY = mapY
+        self.map = map
         
         self.itemType = itemType
         self.game = game
@@ -213,8 +216,12 @@ class Item(pg.sprite.Sprite):
             else: 
                 self.image = self.clearImage
         else:
-            #Item should be visible if not in inventory
-            self.image = self.itemImage
+            #Item should be visible if not in inventory and on the same map as the player.
+            if self.map == self.game.current_map:
+                self.image = self.itemImage #Show
+            else:
+                self.image = self.clearImage #Hide
+            
 
 class Wall(pg.sprite.Sprite):
     """
@@ -234,4 +241,3 @@ class Wall(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x * settings.TILESIZE
         self.rect.y = y * settings.TILESIZE
-

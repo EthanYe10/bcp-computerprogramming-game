@@ -1,4 +1,5 @@
 Add mobs
+Make the items dissapear when you're not in the same map as them.
 
 Fix where the map transitions spit you out:
     Fix the code that detects if the players is within a door zone (Optional)

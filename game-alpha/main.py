@@ -59,26 +59,26 @@ class Game:
 
         #Red key
         img = pg.image.load("images\\blackKey.png").convert_alpha()
-        itm = Item(self, img, 200, 200, 0, 0, settings.ITEM_TYPE_KEY_BLACK)
+        itm = Item(self, img, 200, 200, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
         self.load_map(self.current_map)
 
         #Black key
         img = pg.image.load("images\\redKey.png").convert_alpha()
-        itm = Item(self, img, 300, 300, 0, 0, settings.ITEM_TYPE_KEY_BLACK)
+        itm = Item(self, img, 300, 300, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
         #Yellow Key
         img = pg.image.load("images\\yellowKey.png").convert_alpha()
-        itm = Item(self, img, 400, 400, 0, 0, settings.ITEM_TYPE_KEY_BLACK)
+        itm = Item(self, img, 400, 400, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
         #Weapon Tesla
         img = pg.image.load("images\\weapon_tesla.png").convert_alpha()
-        itm = Item(self, img, 500, 500, 0, 0, settings.ITEM_TYPE_WEAPON_TESLA)
+        itm = Item(self, img, 500, 500, self.map1_1, settings.ITEM_TYPE_WEAPON_TESLA)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
