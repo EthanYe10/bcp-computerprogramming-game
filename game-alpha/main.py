@@ -11,7 +11,7 @@ class Game:
         # initialize map manager
 
     def new(self): #Create a new game, sprites, and maps. 
-        self.map_manager: utils.MapManager = utils.MapManager()
+        self.map_manager: utils.MapManager = utils.MapManager(self)
 
         self.map1_1 = utils.Map(os.path.join("maps", "map1_1.txt"))
         self.map1_2 = utils.Map(os.path.join("maps", "map1_2.txt"))
@@ -25,7 +25,7 @@ class Game:
             24, 17, # end of door of first map
             0, 0,   # start of door of second map
             0, 17, # end of door of second map
-            "right")) # the direction the player will be facing when entering the door
+            settings.DIRECTION_RIGHT)) # the direction the player will be facing when entering the door
         """
         in this example the door will be at (0,0) to (10,10) on the first map and (0,0) to (10,10) on the second map
         thus if the player is in the first map and their position is anywhere from (0,0) to (10,10) the player will be teleported to the second map at (0,0)
@@ -115,11 +115,13 @@ class Game:
         """
         Checks if player is within the "door zone" of the current map and assign next_map to the next map if applicable, None if not. 
         Teleports player to the other map and updates and loads the next map
-        Author: Ethan Ye"""
+        Author: Ethan Ye
         
-        if self.map_transition_countdown.running():
-            return
-        self.map_transition_countdown.start()
+        Edited for seemless transitions by Matthew Sheyda:
+        get_connected_map() now returns direction also. Direction is checked to apply door boost and 
+        interpolate along the axis that runs parrelel to the doors' directions.
+        """
+        
         next_map, spawnX, spawnY = self.map_manager.get_connected_map(self.current_map, self.player.rect.x//settings.TILESIZE, self.player.rect.y//settings.TILESIZE)
         if next_map and next_map != self.current_map:
             print("Transitioning to map:", next_map.filename)
@@ -127,8 +129,9 @@ class Game:
             self.clear_map()
             self.load_map(next_map)
             self.current_map = next_map
-            self.player.rect.x = spawnX * settings.TILESIZE
-            self.player.rect.y = spawnY * settings.TILESIZE
+            
+            self.player.rect.x = spawnX
+            self.player.rect.y = spawnY
 
     def load_map(self, map : utils.Map):
         """

@@ -34,6 +34,12 @@ DIRECTION_DOWNLEFT = 6
 DIRECTION_TOPRIGHT = 7
 DIRECTION_DOWNRIGHT = 8
 
+DOOR_BOOST = 50
+"""Small boost for when the player transitions maps 
+through a connection to prevent being placed in the 
+zone of the opposite door, thereby getting stuck loop of
+transitioning between the two doors."""
+
 ITEM_TYPE_KEY_BLACK = 1
 ITEM_TYPE_KEY_RED = 2
 ITEM_TYPE_KEY_YELLOW = 3

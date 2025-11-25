@@ -54,7 +54,7 @@ class MapConnection:
 
         when a player enters a door they always exit at the other maps x1, y1
 
-        direction is the direction the player will be facing when entering the door
+        direction is the direction the player will be facing when entering the door from map 1 of the connection.
         """
         self.map1 = map1
         self.map2 = map2
@@ -68,6 +68,17 @@ class MapConnection:
         self.map2y2 = map2y2
         self.direction = direction
 
+        #Determine returnDirection for when player is using the connection in the opposit direction. 
+        #Should always be opposite. Credit: Matthew Sheyda.
+
+        if direction == DIRECTION_UP:
+            self.returnDirection = DIRECTION_DOWN
+        elif direction == DIRECTION_DOWN:
+            self.returnDirection = DIRECTION_UP
+        elif direction == DIRECTION_RIGHT:
+            self.returnDirection = DIRECTION_LEFT
+        elif direction == DIRECTION_LEFT:
+            self.returnDirection = DIRECTION_RIGHT
 
 class MapManager:
     """class MapManager
@@ -76,9 +87,12 @@ class MapManager:
     singleton instance, do not create multiple if you values your sanity
     contains functions to add maps and connections, and get the next map if player is in a door
     """
-    def __init__(self):
+    def __init__(self, game):
         self.maps = {}
         self.connections = []
+        self.game = game
+
+        #self.game added by Matthew Sheyda.
     
     def add_map(self, map: Map):
         """add a map to the map manager"""
@@ -87,6 +101,30 @@ class MapManager:
     def add_connection(self, connection: MapConnection):
         """add a connection between two maps"""
         self.connections.append(connection)
+
+    def getDoorSpawnLocation(self, map2x1, map2y1, direction):
+        #Determine spawn x/y. Credit: Matthew Sheyda, edited off of Ethan Ye's code.
+        #Made to apply door boost, keep position along axis parrelel to doors, for seemlessness.
+
+        spawnX = 0
+        spawnY = 0
+
+        if direction == DIRECTION_RIGHT:
+            spawnX = map2x1 * TILESIZE + DOOR_BOOST
+            spawnY = self.game.player.rect.y #Keep player's current y. 
+        if direction == DIRECTION_LEFT:
+            spawnX = map2x1 * TILESIZE - DOOR_BOOST
+            spawnY = self.game.player.rect.y #Keep player's current y
+        
+        #Untested :P
+        if direction == DIRECTION_UP:
+            spawnX = self.game.player.rect.x #Keep player's current x. 
+            spawnY = map2y1 * TILESIZE - DOOR_BOOST 
+        if direction == DIRECTION_DOWN:
+            spawnX = self.game.player.rect.x #Keep player's current x.
+            spawnY = map2y1 * TILESIZE + DOOR_BOOST 
+
+        return spawnX, spawnY
     
     def get_connected_map(self, map: Map, player_x, player_y):
         """returns connected map if player is in the door
@@ -114,13 +152,20 @@ class MapManager:
             if (connection.map1 == map and
                 connection.map1x1 <= player_x <= connection.map1x2 and
                 connection.map1y1 <= player_y <= connection.map1y2):
-                return connection.map2, connection.map2x1, connection.map2y1
+
+                spawnX, spawnY = self.getDoorSpawnLocation(connection.map2x1, connection.map2y1, connection.direction)
+                #Opposite, returnDirection since player is travelling in the opposite direction: map2 to map1
+
+                return connection.map2, spawnX, spawnY
             if (connection.map2 == map and
                 connection.map2x1 <= player_x <= connection.map2x2 and
                 connection.map2y1 <= player_y <= connection.map2y2):
-                return connection.map1, connection.map1x1, connection.map1y1
-        return None, None, None
-    
+
+                spawnX, spawnY = self.getDoorSpawnLocation(connection.map1x1, connection.map1y1, connection.returnDirection)
+                #Opposite, returnDirection since player is travelling in the opposite direction: map2 to map1
+
+                return connection.map1, spawnX, spawnY
+        return None, None, None #Return None for everything if we're not transitioning.
 
 class Countdown:
     """class Countdown
