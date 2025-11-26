@@ -4,6 +4,8 @@ Make the items dissapear when you're not in the same map as them.
 Fix where the map transitions spit you out:
     Fix the code that detects if the players is within a door zone (Optional)
 
+Doors that require a specific key.
+
 Standardize what each character represents in the map files:
     1 = wall (color 1)
     1 = wall (color 2)

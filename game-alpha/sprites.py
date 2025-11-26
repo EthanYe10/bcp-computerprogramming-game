@@ -89,7 +89,7 @@ class Player(pg.sprite.Sprite):
             #Check which weapon is held to determine which bullet to fire.
             item = self.getHeldItem()
 
-            if type(item) == Item and not (self.vel.x == 0 and self.vel.y == 0): #To make sure there's an itemType attribute. Also make sure player isnt standing still for bullet to fire
+            if item.itemType == settings.ITEM_TYPE_WEAPON_TESLA and not (self.vel.x == 0 and self.vel.y == 0): #To make sure there's an itemType attribute. Also make sure player isnt standing still for bullet to fire
                 p = Projectile(self.game, self.vel, settings.WHITE, 20, 2, self.rect.x, self.rect.y, 5)
                 self.game.all_sprites.add(p)
                 self.game.projectile_sprites.add(p)
