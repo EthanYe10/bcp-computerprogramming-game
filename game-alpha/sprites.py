@@ -75,12 +75,14 @@ class Player(pg.sprite.Sprite):
 
         if keystate[pg.K_r] and not self.Rpressed: #Drop held item
             self.Rpressed = True #R is now pressed
-            self.getHeldItem().map = self.game.current_map #Set item map to the map it is being dropped at.
-            self.inventory.remove(self.getHeldItem())
 
-            #If player was on the last item of inventory and their is no longer an item at current item, decrement.
-            if self.currentItem == len(self.inventory) and not self.currentItem == 0: #if currentItem is 0, it will stay so 
-                self.currentItem -= 1
+            if len(self.inventory) > 0: #Prevent crash from if statement getting .map of NoneType.
+                self.getHeldItem().map = self.game.current_map #Set item map to the map it is being dropped at.
+                self.inventory.remove(self.getHeldItem())
+
+                #If player was on the last item of inventory and their is no longer an item at current item, decrement.
+                if self.currentItem == len(self.inventory) and not self.currentItem == 0: #if currentItem is 0, it will stay so 
+                    self.currentItem -= 1
 
         if not keystate[pg.K_r]:
             self.Rpressed = False #If r isnt pressed anymore, set q pressed to false.

@@ -6,6 +6,8 @@ Fix where the map transitions spit you out:
 
 Doors that require a specific key.
 
+Ammo?
+
 Standardize what each character represents in the map files:
     1 = wall (color 1)
     1 = wall (color 2)
