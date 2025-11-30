@@ -42,6 +42,7 @@ class Game:
         self.effect_sprites = pg.sprite.Group() #Sprite group for visual effects related sprites
 
         self.projectile_sprites = pg.sprite.Group() #Sprite group for projectile sprites
+        
         self.walls = pg.sprite.Group() #Sprite group for walls
 
         #Instantiate Player, add to sprite groups.

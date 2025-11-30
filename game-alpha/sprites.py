@@ -17,10 +17,6 @@ class Player(pg.sprite.Sprite):
 
         self.game = game
 
-        #Stores which screen of the map its on.
-        self.mapX = 0
-        self.mapY = 0
-
         self.inventory = pg.sprite.Group() #Inintialize inventory (a sprite group of item sprites)
         self.currentItem = 0 #Set current item to 0.
 
@@ -49,7 +45,9 @@ class Player(pg.sprite.Sprite):
         if keystate[pg.K_a]: #Check if a is pressed. Walk left.
             self.vel.x -= settings.PLAYER_SPEED
 
-        #Slow down diagonal movement.
+        # slow down diagonal movement
+        if self.vel.x != 0 and self.vel.y != 0:
+            self.vel *= 0.70710678118
 
         if keystate[pg.K_e] and not self.Epressed: #Pick up nearby item. 
             self.Epressed = True #E is now pressed
@@ -95,13 +93,50 @@ class Player(pg.sprite.Sprite):
                     p = Projectile(self.game, self.vel, settings.WHITE, 20, 2, self.rect.x, self.rect.y, 5)
                     self.game.all_sprites.add(p)
                     self.game.projectile_sprites.add(p)
-            
-    #def screenTransition():
+
+    def wallCollide_x(self):
+        #Code by Ethan Ye paraphrased from cozort. Copied in by Matthew
+        hits = pg.sprite.spritecollide(self, self.game.walls, False)  # get hits
+        for wall in hits:  # if there are collisions
+            #self.move_walls_x(wall)
+            if self.vel.x > 0:  # moving right
+                # set player position to left side of wall - player width
+                self.rect.x = wall.rect.left - self.rect.width
+            if self.vel.x < 0:  # moving left
+                # set player position to right side of wall
+                self.rect.x = wall.rect.right
+            # set velocity to 0 to prevent further movement in that direction
+            self.vel.x = 0
+            # update rect position
+            self.rect.x = self.rect.x
+
+    def wallCollide_y(self):
+        #By Ethan Ye paraphrased from cozort.
+        hits = pg.sprite.spritecollide(self, self.game.walls, False)  # get hits
+        for wall in hits:  # if there are collisions
+            #self.move_walls_y(wall)
+            if self.vel.y > 0:  # moving down
+                # set player position to left side of wall - player width
+                self.rect.y = wall.rect.top - self.rect.height
+            if self.vel.y < 0:  # moving up
+                # set player position to right side of wall
+                self.rect.y = wall.rect.bottom
+            # set velocity to 0 to prevent further movement in that direction
+            self.vel.y = 0
+            # update rect position
+            self.rect.y = self.rect.y
 
     def update(self):
         #Move based on self.vel vector based on input
+
+        #Handle movement and collision on x axis
         self.rect.x += self.vel.x
+        self.wallCollide_x()
+
+        #Handle movement and collision on y axis
         self.rect.y += self.vel.y
+        self.wallCollide_y()
+
         #print(self.rect.x, self.rect.y)
         print("Inventory: Length:", len(self.inventory), "Current:", self.currentItem)
         #print(self.currentItem)
@@ -121,7 +156,7 @@ class Player(pg.sprite.Sprite):
             fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE)
             self.game.all_sprites.add(fr) #Add to all_sprites group
             self.game.effect_sprites.add(fr) #Add to effect_sprites group
-        
+            
 #Fading rectangle
 class FadeRect(pg.sprite.Sprite):
     """FadeRect class
