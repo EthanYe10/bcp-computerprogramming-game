@@ -8,6 +8,8 @@ Doors that require a specific key.
 
 Ammo?
 
+Kill mobs once offscreen
+
 Standardize what each character represents in the map files:
     1 = wall (color 1)
     1 = wall (color 2)

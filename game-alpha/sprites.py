@@ -156,7 +156,31 @@ class Player(pg.sprite.Sprite):
             fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE)
             self.game.all_sprites.add(fr) #Add to all_sprites group
             self.game.effect_sprites.add(fr) #Add to effect_sprites group
-            
+
+#Mobile entity that damages player
+class Mob(pg.sprite.Sprite):
+    def __init__(self, game, sizeX, sizeY, locX, locY, color, speed, health, followPlayer_bool):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((sizeX, sizeY))
+        self.image.fill(color)  #White color for player
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (locX, locY)
+
+        #Set game reference
+        self.game = game
+
+        #Set mob settings
+        self.speed = speed
+        self.health = health
+
+        #Boolean value that controls the behavior of the mob.
+        #False: Bounces around level
+        #True: Follows player.
+        self.followPlayer_bool = followPlayer_bool
+    
+    def update(self):
+        pass
+
 #Fading rectangle
 class FadeRect(pg.sprite.Sprite):
     """FadeRect class

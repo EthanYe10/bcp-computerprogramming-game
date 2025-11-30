@@ -45,6 +45,8 @@ class Game:
         
         self.walls = pg.sprite.Group() #Sprite group for walls
 
+        self.mob_sprites = pg.sprite.Group() #Sprite group for mobs
+
         #Instantiate Player, add to sprite groups.
         self.player = Player(self, 200, 200) #Store player reference for later access
         self.input_sprites.add(self.player)
@@ -82,6 +84,10 @@ class Game:
         itm = Item(self, img, 500, 500, self.map1_1, settings.ITEM_TYPE_WEAPON_TESLA)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
+
+        #Create mobs (Temporary):
+        m = Mob(self, 32, 32, 600, 500, settings.RED, 10, 10, False)
+        self.mob_sprites.add(m)
 
     def input(self):
         #Loop through all sprites that take input and scan for input.
