@@ -90,11 +90,11 @@ class Player(pg.sprite.Sprite):
         if keystate[pg.K_SPACE]: #Fire weaopn (If has one)
             #Check which weapon is held to determine which bullet to fire.
             item = self.getHeldItem()
-
-            if item.itemType == settings.ITEM_TYPE_WEAPON_TESLA and not (self.vel.x == 0 and self.vel.y == 0): #To make sure there's an itemType attribute. Also make sure player isnt standing still for bullet to fire
-                p = Projectile(self.game, self.vel, settings.WHITE, 20, 2, self.rect.x, self.rect.y, 5)
-                self.game.all_sprites.add(p)
-                self.game.projectile_sprites.add(p)
+            if len(self.inventory) > 0: #Prevent crash from if statement getting .map of NoneType.
+                if item.itemType == settings.ITEM_TYPE_WEAPON_TESLA and not (self.vel.x == 0 and self.vel.y == 0): #To make sure there's an itemType attribute. Also make sure player isnt standing still for bullet to fire
+                    p = Projectile(self.game, self.vel, settings.WHITE, 20, 2, self.rect.x, self.rect.y, 5)
+                    self.game.all_sprites.add(p)
+                    self.game.projectile_sprites.add(p)
             
     #def screenTransition():
 
