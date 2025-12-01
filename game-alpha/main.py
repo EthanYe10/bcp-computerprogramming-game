@@ -88,6 +88,7 @@ class Game:
         #Create mobs (Temporary):
         m = Mob(self, 32, 32, 600, 500, settings.RED, 10, 10, False)
         self.mob_sprites.add(m)
+        self.all_sprites.add(m)
 
     def input(self):
         #Loop through all sprites that take input and scan for input.
@@ -108,6 +109,7 @@ class Game:
         self.item_sprites.draw(self.screen)
         self.projectile_sprites.draw(self.screen)
         self.walls.draw(self.screen)
+        self.mob_sprites.draw(self.screen)
         pg.display.flip()
 
     def clear_map(self):

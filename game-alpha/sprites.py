@@ -173,13 +173,65 @@ class Mob(pg.sprite.Sprite):
         self.speed = speed
         self.health = health
 
-        #Boolean value that controls the behavior of the mob.
-        #False: Bounces around level
-        #True: Follows player.
+        #Boolean value that controls the behavior of the mob. False: Bounces around Map. True: Follows player.
         self.followPlayer_bool = followPlayer_bool
-    
+
+        self.vel = pg.Vector2() #Velocity vector
+
+        if not self.followPlayer_bool: #Set diagonal direction
+            self.vel.x = -self.speed #todo: Make this vector random direction
+            self.vel.y = -self.speed
+
+    def wallCollide_x(self):
+        #Code by Ethan Ye paraphrased from cozort. Copied in by Matthew
+        hits = pg.sprite.spritecollide(self, self.game.walls, False)  # get hits
+        for wall in hits:  # if there are collisions
+            #self.move_walls_x(wall)
+            if self.vel.x > 0:  # moving right
+                # set player position to left side of wall - player width
+                self.rect.x = wall.rect.left - self.rect.width
+            if self.vel.x < 0:  # moving left
+                # set player position to right side of wall
+                self.rect.x = wall.rect.right
+            # set velocity to 0 to prevent further movement in that direction
+            self.vel.x = 0
+            # update rect position
+            self.rect.x = self.rect.x
+        if len(hits) > 0: #Return true if wall was collided
+            return True
+        else:
+            return False
+
+    def wallCollide_y(self):
+        #By Ethan Ye paraphrased from cozort.
+        hits = pg.sprite.spritecollide(self, self.game.walls, False)  # get hits
+        for wall in hits:  # if there are collisions
+            #self.move_walls_y(wall)
+            if self.vel.y > 0:  # moving down
+                # set player position to left side of wall - player width
+                self.rect.y = wall.rect.top - self.rect.height
+            if self.vel.y < 0:  # moving up
+                # set player position to right side of wall
+                self.rect.y = wall.rect.bottom
+            # set velocity to 0 to prevent further movement in that direction
+            self.vel.y = 0
+            # update rect position
+            self.rect.y = self.rect.y
+        if len(hits) > 0: #Return true if wall was collided
+            return True
+        else:
+            return False
+
     def update(self):
-        pass
+        #Handle movement and collision on x axis
+        self.rect.x += self.vel.x
+        if self.wallCollide_x(): #If collided, bounce.
+            self.rect.x *= -1
+
+        #Handle movement and collision on y axis
+        self.rect.y += self.vel.y
+        if self.wallCollide_y(): #If collided, bounce.
+            self.rect.y *= -1
 
 #Fading rectangle
 class FadeRect(pg.sprite.Sprite):
