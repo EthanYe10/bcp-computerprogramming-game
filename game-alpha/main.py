@@ -13,8 +13,8 @@ class Game:
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
 
-        self.map1_1 = utils.Map(os.path.join("maps", "map1_1.txt"))
-        self.map1_2 = utils.Map(os.path.join("maps", "map1_2.txt"))
+        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map1_1.txt"), fog=True)
+        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map1_2.txt"), fog=False)
 
         self.map_manager.add_map(self.map1_1)
         self.map_manager.add_map(self.map1_2)
@@ -36,6 +36,8 @@ class Game:
         self.all_sprites = pg.sprite.Group() #Sprite group which contains all sprites
 
         self.input_sprites = pg.sprite.Group() #Sprite group which contains all sprites with input() from the user
+        
+        self.visible_sprites = pg.sprite.Group() #Sprite group for all visible sprites (if there is fog of war)
 
         self.item_sprites = pg.sprite.Group() #Sprite group for items 
 
@@ -61,26 +63,26 @@ class Game:
         #Create items:
 
         #Red key
-        img = pg.image.load("images\\blackKey.png").convert_alpha()
+        img = pg.image.load(os.path.join("game-alpha", "images", "blackKey.png")).convert_alpha()
         itm = Item(self, img, 200, 200, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
         self.load_map(self.current_map)
 
         #Black key
-        img = pg.image.load("images\\redKey.png").convert_alpha()
+        img = pg.image.load(os.path.join("game-alpha", "images", "redKey.png")).convert_alpha()
         itm = Item(self, img, 300, 300, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
         #Yellow Key
-        img = pg.image.load("images\\yellowKey.png").convert_alpha()
+        img = pg.image.load(os.path.join("game-alpha", "images", "yellowKey.png")).convert_alpha()
         itm = Item(self, img, 400, 400, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
         #Weapon Tesla
-        img = pg.image.load("images\\weapon_tesla.png").convert_alpha()
+        img = pg.image.load(os.path.join("game-alpha", "images", "weapon_tesla.png")).convert_alpha()
         itm = Item(self, img, 500, 500, self.map1_1, settings.ITEM_TYPE_WEAPON_TESLA)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
@@ -98,18 +100,59 @@ class Game:
     def update(self):
         #run update function of all sprites
         print(self.player.rect.x // settings.TILESIZE, self.player.rect.y // settings.TILESIZE)
-        for sprite in self.all_sprites:
-            sprite.update()
+        
+        if self.current_map.fog:
+            self.visible_sprites.empty()
+            for sprite in self.all_sprites:
+                x_diff = self.player.rect.x - sprite.rect.x 
+                y_diff = self.player.rect.y - sprite.rect.y 
+                dist = ((x_diff)**2 + (y_diff)**2)**0.5
+                if dist <= settings.FOG_RADIUS_TILES * settings.TILESIZE:
+                    self.visible_sprites.add(sprite)
+            self.visible_sprites.update()
+        else:
+            self.all_sprites.update()
+                
         self.check_map_transitions()
+
+
     def draw(self):
-        self.screen.fill(settings.BLUE)
-        #Draw sprites in specific order to prevent layering issues.
-        self.effect_sprites.draw(self.screen)
-        self.input_sprites.draw(self.screen)
-        self.item_sprites.draw(self.screen)
-        self.projectile_sprites.draw(self.screen)
-        self.walls.draw(self.screen)
-        self.mob_sprites.draw(self.screen)
+        if self.current_map.fog:
+            # fill screen with blue underlay
+            self.screen.fill(settings.BLUE)
+            # draw visible sprites
+            self.visible_sprites.draw(self.screen)
+            
+            # new surface for fog (layer above blue underlay)
+            fog_surface = pg.Surface((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT), pg.SRCALPHA)
+            fog_surface.fill(settings.DARK_GRAY)
+            
+            # circle around player to clear fog
+            player_center_x = self.player.rect.centerx
+            player_center_y = self.player.rect.centery
+            clear_radius = settings.FOG_RADIUS_TILES * settings.TILESIZE
+            
+            # transparent circle 
+            pg.draw.circle(fog_surface, settings.TRANSPARANT, (player_center_x, player_center_y), clear_radius)
+            
+            # implement gradient effect
+            gradient_steps = 15
+            
+            self.screen.blit(fog_surface, (0, 0))
+            
+        elif not self.current_map.fog:
+            
+            
+            self.screen.fill(settings.DARK_GRAY)
+        else:
+            self.screen.fill(settings.BLUE)
+            #Draw sprites in specific order to prevent layering issues.
+            self.effect_sprites.draw(self.screen)
+            self.input_sprites.draw(self.screen)
+            self.item_sprites.draw(self.screen)
+            self.projectile_sprites.draw(self.screen)
+            self.walls.draw(self.screen)
+            self.mob_sprites.draw(self.screen)
         pg.display.flip()
 
     def clear_map(self):
