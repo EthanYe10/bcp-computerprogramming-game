@@ -1,6 +1,7 @@
 import pygame as pg
 import settings
 import utils
+import json
 from sprites import *
 import os
 
@@ -13,8 +14,9 @@ class Game:
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
 
-        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map1_1.txt"))
-        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map1_2.txt"))
+        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map1_1.txt"), self, "map1_1")
+        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map1_2.txt"), self, "map1_2")
+        
 
         self.map_manager.add_map(self.map1_1)
         self.map_manager.add_map(self.map1_2)
@@ -30,14 +32,11 @@ class Game:
         in this example the door will be at (0,0) to (10,10) on the first map and (0,0) to (10,10) on the second map
         thus if the player is in the first map and their position is anywhere from (0,0) to (10,10) the player will be teleported to the second map at (0,0)
         """
-        self.current_map = self.map1_1
         
         #Create sprite groups
         self.all_sprites = pg.sprite.Group() #Sprite group which contains all sprites
 
         self.input_sprites = pg.sprite.Group() #Sprite group which contains all sprites with input() from the user
-        
-        self.visible_sprites = pg.sprite.Group() #Sprite group for all visible sprites (if there is fog of war)
 
         self.item_sprites = pg.sprite.Group() #Sprite group for items 
 
@@ -54,6 +53,9 @@ class Game:
         self.input_sprites.add(self.player)
         self.all_sprites.add(self.player)
 
+
+        # self.map = utils.Map(os.path.join("game-alpha", "maps", "map1_0_4.txt"), self, "map1_0_4") 
+        self.current_map = self.map1_1
         #Create delta time and pg.Clock attributes.
         self.deltaTime = 0
         g.clock = pg.time.Clock()
@@ -63,14 +65,14 @@ class Game:
         #Create items:
 
         #Red key
-        img = pg.image.load(os.path.join("game-alpha", "images", "blackKey.png")).convert_alpha()
+        img = pg.image.load(os.path.join("game-alpha", "images", "redKey.png")).convert_alpha()
         itm = Item(self, img, 200, 200, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
         self.load_map(self.current_map)
 
         #Black key
-        img = pg.image.load(os.path.join("game-alpha", "images", "redKey.png")).convert_alpha()
+        img = pg.image.load(os.path.join("game-alpha", "images", "blackKey.png")).convert_alpha()
         itm = Item(self, img, 300, 300, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
@@ -88,7 +90,7 @@ class Game:
         self.item_sprites.add(itm)
 
         #Create mobs (Temporary):
-        m = Mob(self, 32, 32, 600, 500, settings.RED, 5, 10, True)
+        m = Mob(self, 32, 32, 600, 500, settings.RED, 5, 10, "mob1", False)
         self.mob_sprites.add(m)
         self.all_sprites.add(m)
 
@@ -99,55 +101,19 @@ class Game:
         pass
     def update(self):
         #run update function of all sprites
-        
-        if self.current_map.fog:
-            self.visible_sprites.empty()
-            for sprite in self.all_sprites:
-                x_diff = self.player.rect.x - sprite.rect.x 
-                y_diff = self.player.rect.y - sprite.rect.y 
-                dist = ((x_diff)**2 + (y_diff)**2)**0.5
-                if dist <= settings.FOG_RADIUS_TILES * settings.TILESIZE:
-                    self.visible_sprites.add(sprite)
-            self.visible_sprites.update()
-        else:
-            self.all_sprites.update()
-                
+        print(self.player.rect.x // settings.TILESIZE, self.player.rect.y // settings.TILESIZE)
+        for sprite in self.all_sprites:
+            sprite.update()
         self.check_map_transitions()
-
-
     def draw(self):
-        if self.current_map.fog:
-            # fill screen with blue underlay
-            self.screen.fill(settings.BLUE)
-            # draw visible sprites
-            self.visible_sprites.draw(self.screen)
-            
-            # new surface for fog (layer above blue underlay)
-            fog_surface = pg.Surface((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT), pg.SRCALPHA)
-            fog_surface.fill(settings.DARK_GRAY)
-            
-            # circle around player to clear fog
-            player_center_x = self.player.rect.centerx
-            player_center_y = self.player.rect.centery
-            clear_radius = settings.FOG_RADIUS_TILES * settings.TILESIZE
-            
-            # transparent circle 
-            pg.draw.circle(fog_surface, settings.TRANSPARANT, (player_center_x, player_center_y), clear_radius)
-            
-            # TODO: implement gradient effect
-            gradient_steps = 15
-            
-            self.screen.blit(fog_surface, (0, 0))
-            
-        else:
-            self.screen.fill(settings.BLUE)
-            #Draw sprites in specific order to prevent layering issues.
-            self.effect_sprites.draw(self.screen)
-            self.input_sprites.draw(self.screen)
-            self.item_sprites.draw(self.screen)
-            self.projectile_sprites.draw(self.screen)
-            self.walls.draw(self.screen)
-            self.mob_sprites.draw(self.screen)
+        self.screen.fill(settings.BLUE)
+        #Draw sprites in specific order to prevent layering issues.
+        self.effect_sprites.draw(self.screen)
+        self.input_sprites.draw(self.screen)
+        self.item_sprites.draw(self.screen)
+        self.projectile_sprites.draw(self.screen)
+        self.walls.draw(self.screen)
+        self.mob_sprites.draw(self.screen)
         pg.display.flip()
 
     def clear_map(self):
@@ -171,6 +137,7 @@ class Game:
         
         next_map, spawnX, spawnY = self.map_manager.get_connected_map(self.current_map, self.player.rect.x//settings.TILESIZE, self.player.rect.y//settings.TILESIZE)
         if next_map and next_map != self.current_map:
+            self.save_map_state("map_state.json")
             print("Transitioning to map:", next_map.filename)
             print('Player', self.player.rect.x // settings.TILESIZE, self.player.rect.y // settings.TILESIZE)
             self.clear_map()
@@ -191,7 +158,30 @@ class Game:
                     _ = Wall(self, col, row, settings.LIGHT_GRAY)
                 if tile == "2":
                     _ = Wall(self, col, row, settings.DARK_GRAY)
-
+    def save_map_state(self, json_filename):
+        # saves current map state to json file
+        state = {
+            "mobs": [
+                {
+                    "name": mob.id,
+                    "x": mob.rect.x,
+                    "y": mob.rect.y,
+                    "health": mob.health
+                } for mob in self.mob_sprites
+            ], 
+            "items": [
+                {
+                    "item": item.itemType,
+                    "x": item.rect.x,
+                    "y": item.rect.y
+                } for item in self.item_sprites
+            ]
+        }
+        with open(json_filename, "w") as f:
+            json.dump(state, f, indent=4)
+        
+        
+        
             
 
 g = Game()

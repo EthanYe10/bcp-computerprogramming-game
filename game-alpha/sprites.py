@@ -159,12 +159,13 @@ class Player(pg.sprite.Sprite):
 
 #Mobile entity that damages player
 class Mob(pg.sprite.Sprite):
-    def __init__(self, game, sizeX, sizeY, locX, locY, color, speed, health, followPlayer_bool = True):
+    def __init__(self, game, sizeX, sizeY, locX, locY, color, speed, health, id, followPlayer_bool = True):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((sizeX, sizeY))
         self.image.fill(color)  #White color for player
         self.rect = self.image.get_rect()
         self.rect.topleft = (locX, locY)
+        self.id = id
 
         #Set game reference
         self.game = game
