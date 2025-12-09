@@ -8,8 +8,9 @@ class Map:
     other portions paraphrased by various sources by Ethan Ye"""
     
     # initialize map object from text file
-    def __init__(self, filename, fog=False):
+    def __init__(self, filename, game, fog=False):
         self.filename = filename
+        self.game = game
         # data is list of strings
         self.data = []
         self.fog = fog
