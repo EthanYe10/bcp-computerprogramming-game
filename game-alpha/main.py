@@ -13,8 +13,8 @@ class Game:
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
 
-        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map1_1.txt"), fog=True)
-        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map1_2.txt"), fog=False)
+        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map1_1.txt"))
+        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map1_2.txt"))
 
         self.map_manager.add_map(self.map1_1)
         self.map_manager.add_map(self.map1_2)
@@ -88,7 +88,7 @@ class Game:
         self.item_sprites.add(itm)
 
         #Create mobs (Temporary):
-        m = Mob(self, 32, 32, 600, 500, settings.RED, 10, 10, False)
+        m = Mob(self, 32, 32, 600, 500, settings.RED, 5, 10, True)
         self.mob_sprites.add(m)
         self.all_sprites.add(m)
 
@@ -99,7 +99,6 @@ class Game:
         pass
     def update(self):
         #run update function of all sprites
-        print(self.player.rect.x // settings.TILESIZE, self.player.rect.y // settings.TILESIZE)
         
         if self.current_map.fog:
             self.visible_sprites.empty()
@@ -135,15 +134,11 @@ class Game:
             # transparent circle 
             pg.draw.circle(fog_surface, settings.TRANSPARANT, (player_center_x, player_center_y), clear_radius)
             
-            # implement gradient effect
+            # TODO: implement gradient effect
             gradient_steps = 15
             
             self.screen.blit(fog_surface, (0, 0))
             
-        elif not self.current_map.fog:
-            
-            
-            self.screen.fill(settings.DARK_GRAY)
         else:
             self.screen.fill(settings.BLUE)
             #Draw sprites in specific order to prevent layering issues.
