@@ -8,11 +8,11 @@ class Map:
     other portions paraphrased by various sources by Ethan Ye"""
     
     # initialize map object from text file
-    def __init__(self, filename):
+    def __init__(self, filename, fog=False):
         self.filename = filename
         # data is list of strings
         self.data = []
-
+        self.fog = fog
         # load map from file, using 'with' to ensure file is closed after reading
         with open(filename, "rt") as f1:
 

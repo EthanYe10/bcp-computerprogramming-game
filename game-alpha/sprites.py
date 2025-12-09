@@ -138,7 +138,7 @@ class Player(pg.sprite.Sprite):
         self.wallCollide_y()
 
         #print(self.rect.x, self.rect.y)
-        print("Inventory: Length:", len(self.inventory), "Current:", self.currentItem)
+        # print("Inventory: Length:", len(self.inventory), "Current:", self.currentItem)
         #print(self.currentItem)
         
         if self.rect.left < 0:
@@ -159,7 +159,7 @@ class Player(pg.sprite.Sprite):
 
 #Mobile entity that damages player
 class Mob(pg.sprite.Sprite):
-    def __init__(self, game, sizeX, sizeY, locX, locY, color, speed, health, followPlayer_bool):
+    def __init__(self, game, sizeX, sizeY, locX, locY, color, speed, health, followPlayer_bool = True):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((sizeX, sizeY))
         self.image.fill(color)  #White color for player
@@ -203,6 +203,13 @@ class Mob(pg.sprite.Sprite):
             return False
 
     def update(self):
+        if self.followPlayer_bool: #If mob is set to follow player
+            direction = pg.Vector2(self.game.player.rect.center) - pg.Vector2(self.rect.center) #Get vector pointing from mob to player
+            if direction.length() != 0:
+                direction = direction.normalize() #Normalize to unit vector
+                self.vel = direction * self.speed #Set velocity vector to point at player with magnitude of speed
+            else:
+                self.vel = pg.Vector2() #If on top of player, set velocity to 0.
         #Handle movement and collision on x axis
         self.rect.x += self.vel.x
         if self.wallCollide_x(): #If collided, bounce.
