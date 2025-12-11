@@ -1,6 +1,6 @@
 import pygame as pg
 import settings
-from main import Game
+# from main import Game
 
 vec = pg.math.Vector2
 
@@ -307,7 +307,7 @@ class Item(pg.sprite.Sprite):
     """Item class
     Author: Matthew Sheyda
     """
-    def __init__(self, game : Game, itemImage, x, y, map, itemType):
+    def __init__(self, game, itemImage, x, y, map, itemType):
         pg.sprite.Sprite.__init__(self)
         self.itemImage = itemImage
 
@@ -320,8 +320,6 @@ class Item(pg.sprite.Sprite):
 
         self.map = map
         
-        self.has_been_found = False
-        
         self.itemType = itemType
         self.game = game
 
@@ -329,11 +327,10 @@ class Item(pg.sprite.Sprite):
         #If in player's inventory, go to player's location.
         if self in self.game.player.inventory:
             self.rect.topleft = (self.game.player.rect.x,self.game.player.rect.y)
-            self.has_been_found = True
+            
                 
         # if item is in inventory, only show if it's held
         if self in self.game.player.inventory:
-            #Items in inventory should only be visible when held
             if self.game.player.getHeldItem() == self:
                 self.image = self.itemImage
             else: 
@@ -341,9 +338,9 @@ class Item(pg.sprite.Sprite):
         # if item is not in inventory, only show if on current map
         else:
             if self.map == self.game.current_map:
-                self.image = self.itemImage #Show
+                self.image = self.itemImage
             else:
-                self.image = self.clearImage #Hide
+                self.image = self.clearImage
             
 
 class Wall(pg.sprite.Sprite):

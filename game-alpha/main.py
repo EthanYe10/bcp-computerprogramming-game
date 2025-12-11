@@ -52,7 +52,7 @@ class Game:
         self.mob_sprites = pg.sprite.Group() #Sprite group for mobs
 
         #Instantiate Player, add to sprite groups.
-        self.player : Player = Player(self, 200, 200) #Store player reference for later access
+        self.player = Player(self, 200, 200) #Store player reference for later access
         self.input_sprites.add(self.player)
         self.all_sprites.add(self.player)
 
