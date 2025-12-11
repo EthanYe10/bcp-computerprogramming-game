@@ -15,8 +15,8 @@ class Game:
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
 
-        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map_1_1_3.txt"), self, fog=False)
-        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map_1_2_1.txt"), self, fog=False)
+        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map1_1_3.txt"), self, fog=False)
+        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map1_2_1.txt"), self, fog=False)
 
         self.map_manager.add_map(self.map1_1)
         self.map_manager.add_map(self.map1_2)
@@ -90,7 +90,7 @@ class Game:
         self.item_sprites.add(itm)
 
         #Create mobs (Temporary):
-        m = Mob(self, 32, 32, 600, 500, settings.RED, 5, 10, True)
+        m = Mob(self, 32, 32, 600, 500, settings.RED, 5, 10)
         self.mob_sprites.add(m)
         self.all_sprites.add(m)
 
@@ -193,6 +193,8 @@ class Game:
                     _ = Wall(self, col, row, settings.LIGHT_GRAY)
                 if tile == "2":
                     _ = Wall(self, col, row, settings.DARK_GRAY)
+                if tile == "3":
+                    _ = Wall(self, col, row, settings.BLACK)
                     
 g = Game()
 g.new()
