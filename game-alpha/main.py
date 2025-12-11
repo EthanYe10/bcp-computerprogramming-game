@@ -9,12 +9,14 @@ class Game:
         pg.init()
         self.screen = pg.display.set_mode((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT))
         # initialize map manager
+        
+    
 
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
 
-        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map1_1.txt"))
-        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map1_2.txt"))
+        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map_1_1_3.txt"), self, fog=False)
+        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map_1_2_1.txt"), self, fog=False)
 
         self.map_manager.add_map(self.map1_1)
         self.map_manager.add_map(self.map1_2)
@@ -50,7 +52,7 @@ class Game:
         self.mob_sprites = pg.sprite.Group() #Sprite group for mobs
 
         #Instantiate Player, add to sprite groups.
-        self.player = Player(self, 200, 200) #Store player reference for later access
+        self.player : Player = Player(self, 200, 200) #Store player reference for later access
         self.input_sprites.add(self.player)
         self.all_sprites.add(self.player)
 
@@ -191,9 +193,7 @@ class Game:
                     _ = Wall(self, col, row, settings.LIGHT_GRAY)
                 if tile == "2":
                     _ = Wall(self, col, row, settings.DARK_GRAY)
-
-            
-
+                    
 g = Game()
 g.new()
 
