@@ -220,6 +220,7 @@ class Mob(pg.sprite.Sprite):
             return False
 
     def update(self):
+        print(self.rect.x, self.rect.y)
         if self.followPlayer_bool: #If mob is set to follow player
             direction = pg.Vector2(self.game.player.rect.center) - pg.Vector2(self.rect.center) #Get vector pointing from mob to player
             if direction.length() != 0:
