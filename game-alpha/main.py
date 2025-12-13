@@ -15,24 +15,60 @@ class Game:
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
 
-        self.map1_1 = utils.Map(os.path.join("game-alpha", "maps", "map_1_1_3.txt"), self, fog=False)
-        self.map1_2 = utils.Map(os.path.join("game-alpha", "maps", "map_1_2_1.txt"), self, fog=False)
+        #Area 1
+        self.map1_1_1 = utils.Map(os.path.join("maps", "map1_1_1.txt"), self, fog=False)
+        self.map1_2_1 = utils.Map(os.path.join("maps", "map1_2_1.txt"), self, fog=False)
+        self.map1_1_2 = utils.Map(os.path.join("maps", "map1_1_2.txt"), self, fog=False)
+        self.map1_1_3 = utils.Map(os.path.join("maps", "map1_1_3.txt"), self, fog=False)
+        self.map1_0_4 = utils.Map(os.path.join("maps", "map1_0_4.txt"), self, fog=False)
+        self.map1_1_4 = utils.Map(os.path.join("maps", "map1_1_4.txt"), self, fog=False)
 
-        self.map_manager.add_map(self.map1_1)
-        self.map_manager.add_map(self.map1_2)
+        self.map_manager.add_map(self.map1_1_1)
+        self.map_manager.add_map(self.map1_2_1)
+        self.map_manager.add_map(self.map1_1_2)
+        self.map_manager.add_map(self.map1_1_3)
+        self.map_manager.add_map(self.map1_0_4)
+        self.map_manager.add_map(self.map1_1_4)
 
         self.map_manager.add_connection(utils.MapConnection(
-            self.map1_1, self.map1_2, # the two maps
+            self.map1_1_1, self.map1_2_1, # the two maps
             24, 0,   # start of door of first map
             24, 17, # end of door of first map
             0, 0,   # start of door of second map
             0, 17, # end of door of second map
             settings.DIRECTION_RIGHT)) # the direction the player will be facing when entering the door
+        
+        self.map_manager.add_connection(utils.MapConnection(
+            self.map1_1_1, self.map1_1_2, # the two maps
+            0, 0,   # start of door of first map
+            24, 0, # end of door of first map
+            0, 18,   # start of door of second map
+            24, 18, # end of door of second map
+            settings.DIRECTION_UP))
+
+        self.map_manager.add_connection(utils.MapConnection(
+            self.map1_1_2, self.map1_1_3, # the two maps
+            0, 0,   # start of door of first map
+            24, 0, # end of door of first map
+            0, 18,   # start of door of second map
+            24, 18, # end of door of second map
+            settings.DIRECTION_UP))
+
+        self.map_manager.add_connection(utils.MapConnection(
+            self.map1_1_3, self.map1_0_4, # the two maps
+            0, 0,   # start of door of first map
+            12, 0, # end of door of first map
+            0, 18,   # start of door of second map
+            12, 18, # end of door of second map
+            settings.DIRECTION_UP))
+
+        self.map_manager.add_connection(utils.MapConnection(self.map1_0_4, self.map1_1_4, *settings.GENERIC_DOOR_RIGHT)) 
+        #Using tuples that are unpacked and used as parameters for brevity.
         """
         in this example the door will be at (0,0) to (10,10) on the first map and (0,0) to (10,10) on the second map
         thus if the player is in the first map and their position is anywhere from (0,0) to (10,10) the player will be teleported to the second map at (0,0)
         """
-        self.current_map = self.map1_1
+        self.current_map = self.map1_1_1
         
         #Create sprite groups
         self.all_sprites = pg.sprite.Group() #Sprite group which contains all sprites
@@ -65,27 +101,27 @@ class Game:
         #Create items:
 
         #Red key
-        img = pg.image.load(os.path.join("game-alpha", "images", "blackKey.png")).convert_alpha()
-        itm = Item(self, img, 200, 200, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
+        img = pg.image.load(os.path.join("images", "blackKey.png")).convert_alpha()
+        itm = Item(self, img, 200, 200, self.map1_1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
         self.load_map(self.current_map)
 
         #Black key
-        img = pg.image.load(os.path.join("game-alpha", "images", "redKey.png")).convert_alpha()
-        itm = Item(self, img, 300, 300, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
+        img = pg.image.load(os.path.join("images", "redKey.png")).convert_alpha()
+        itm = Item(self, img, 300, 300, self.map1_1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
         #Yellow Key
-        img = pg.image.load(os.path.join("game-alpha", "images", "yellowKey.png")).convert_alpha()
-        itm = Item(self, img, 400, 400, self.map1_1, settings.ITEM_TYPE_KEY_BLACK)
+        img = pg.image.load(os.path.join("images", "yellowKey.png")).convert_alpha()
+        itm = Item(self, img, 400, 400, self.map1_1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
         #Weapon Tesla
-        img = pg.image.load(os.path.join("game-alpha", "images", "weapon_tesla.png")).convert_alpha()
-        itm = Item(self, img, 500, 500, self.map1_1, settings.ITEM_TYPE_WEAPON_TESLA)
+        img = pg.image.load(os.path.join("images", "weapon_tesla.png")).convert_alpha()
+        itm = Item(self, img, 500, 500, self.map1_1_1, settings.ITEM_TYPE_WEAPON_TESLA)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
@@ -193,6 +229,8 @@ class Game:
                     _ = Wall(self, col, row, settings.LIGHT_GRAY)
                 if tile == "2":
                     _ = Wall(self, col, row, settings.DARK_GRAY)
+                if tile == "3":
+                    _ = Wall(self, col, row, settings.DEEP_PURPLE)
                     
 g = Game()
 g.new()

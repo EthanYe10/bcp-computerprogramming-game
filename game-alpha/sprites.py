@@ -150,7 +150,7 @@ class Player(pg.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom > settings.WINDOW_HEIGHT:
             self.rect.bottom = settings.WINDOW_HEIGHT
-        # print(self.rect.x // settings.TILESIZE, self.rect.y // settings.TILESIZE)
+        print(self.rect.x // settings.TILESIZE, self.rect.y // settings.TILESIZE, self.game.current_map.filename)
         # print(self.inventory)
 
         if not (self.vel.x == 0 and self.vel.y == 0): #If the player is moving, create a fading rectangle for trail effect.
