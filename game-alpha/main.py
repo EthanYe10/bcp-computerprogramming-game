@@ -10,7 +10,12 @@ class Game:
         self.screen = pg.display.set_mode((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT))
         # initialize map manager
         
-    
+        #Gate images.
+        self.yellowGateImage = pg.image.load(os.path.join("images", "yellowGate.png")).convert_alpha()
+        self.redGateImage = pg.image.load(os.path.join("images", "redGate.png")).convert_alpha()
+        self.orangeGateImage = pg.image.load(os.path.join("images", "orangeGate.png")).convert_alpha()
+        self.blackGateImage =  pg.image.load(os.path.join("images", "blackGate.png")).convert_alpha()
+        self.purpleGateImage =  pg.image.load(os.path.join("images", "purpleGate.png")).convert_alpha()
 
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
@@ -133,38 +138,40 @@ class Game:
 
         #Red key
         img = pg.image.load(os.path.join("images", "redKey.png")).convert_alpha()
-        itm = Item(self, img, 200, 200, self.map1_1_1, settings.ITEM_TYPE_KEY_RED)
+        itm = Item(self, img, 350, 350, self.map1_2_1, settings.ITEM_TYPE_KEY_RED)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
         self.load_map(self.current_map)
 
         #Black key
         img = pg.image.load(os.path.join("images", "blackKey.png")).convert_alpha()
-        itm = Item(self, img, 300, 300, self.map1_1_1, settings.ITEM_TYPE_KEY_BLACK)
+        itm = Item(self, img, 50, 350, self.map1_3_2, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
         #Yellow Key
         img = pg.image.load(os.path.join("images", "yellowKey.png")).convert_alpha()
-        itm = Item(self, img, 400, 400, self.map1_1_1, settings.ITEM_TYPE_KEY_YELLOW)
+        itm = Item(self, img, 400, 64, self.map1_2_6, settings.ITEM_TYPE_KEY_YELLOW)
+        self.all_sprites.add(itm)
+        self.item_sprites.add(itm)
+
+        #Orange Key
+        img = pg.image.load(os.path.join("images", "orangeKey.png")).convert_alpha()
+        itm = Item(self, img, 400, 300, self.map1_3_2, settings.ITEM_TYPE_KEY_ORANGE)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
         #Weapon Tesla
         img = pg.image.load(os.path.join("images", "weapon_tesla.png")).convert_alpha()
-        itm = Item(self, img, 500, 500, self.map1_1_1, settings.ITEM_TYPE_WEAPON_TESLA)
+        itm = Item(self, img, 64, 300, self.map1_0_2, settings.ITEM_TYPE_WEAPON_TESLA)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
-        #Gate images.
-        self.redGateImage = pg.image.load(os.path.join("images", "redGate.png")).convert_alpha()
-
-        self.yellowGateImage = pg.image.load(os.path.join("images", "yellowGate.png")).convert_alpha()
-
-        #Create mobs (Temporary):
-        m = Mob(self, 32, 32, 600, 500, settings.RED, 5, 10)
-        self.mob_sprites.add(m)
-        self.all_sprites.add(m)
+        #Purple Key
+        img = pg.image.load(os.path.join("images", "purpleKey.png")).convert_alpha()
+        itm = Item(self, img, 200, 64, self.map1_0_5, settings.ITEM_TYPE_KEY_PURPLE)
+        self.all_sprites.add(itm)
+        self.item_sprites.add(itm)
 
     def input(self):
         #Loop through all sprites that take input and scan for input.
@@ -228,9 +235,15 @@ class Game:
         """
         Clears all sprite groups not common to all maps and walls while loading the next map in a map transition
         specifically, it clears walls, effects, TODO: other items to be cleared
-        Author: Ethan Ye"""
+        Author: Ethan Ye, Matthew Sheyda"""
         self.effect_sprites.empty()
         self.walls.empty()
+        self.mob_sprites.empty()
+
+        #Kill all of those sprites, now.
+        for sprite in self.all_sprites:
+            if type(sprite) == Wall or type(sprite) == Gate or type(sprite) == Mob or type(sprite) == FadeRect: 
+                sprite.kill()
 
     def check_map_transitions(self):
         """
@@ -259,22 +272,28 @@ class Game:
         Loads the sprites and data from a Map object's data attribute
         Adapted from class Game
         Author: Ethan Ye"""
-        for wall in self.walls:
-            wall.kill()
-        #Kill every wall from all groups to prevent
 
+        #Iterate through the map file. Spawn the corresponding wall/gray/enemy.
         for row, tiles in enumerate(map.data):
             for col, tile in enumerate(tiles):
-                if tile == "1":
+                if tile == "1": #Wall (Light Gray)
                     _ = Wall(self, col, row, settings.LIGHT_GRAY)
-                if tile == "2":
+                if tile == "2": #Wall (Dark Gray)
                     _ = Wall(self, col, row, settings.DARK_GRAY)
-                if tile == "3":
+                if tile == "3": #Wall (Dark Purple)
                     _ = Wall(self, col, row, settings.DEEP_PURPLE)
-                if tile == "r":
+                if tile == "r": #Gate (Red)
                     _ = Gate(self, col, row, self.redGateImage, settings.ITEM_TYPE_KEY_RED)
-                if tile == "y":
+                if tile == "y": #Gate (Yellow)
                     _ = Gate(self, col, row, self.yellowGateImage, settings.ITEM_TYPE_KEY_YELLOW)
+                if tile == "o": #Gate (Orange)
+                    _ = Gate(self, col, row, self.orangeGateImage, settings.ITEM_TYPE_KEY_ORANGE)
+                if tile == "b": #Gate (Blue)
+                    _ = Gate(self, col, row, self.blackGateImage, settings.ITEM_TYPE_KEY_BLACK)
+                if tile == "p": #Gate (Purple)
+                    _ = Gate(self, col, row, self.purpleGateImage, settings.ITEM_TYPE_KEY_PURPLE)
+                if tile == "e": #Enemy (Standard)
+                    pass #_ = Gate(self, col, row, self.purpleGateImage, settings.ITEM_TYPE_KEY_PURPLE)
                     
 g = Game()
 g.new()

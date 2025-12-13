@@ -117,7 +117,6 @@ class MapManager:
             spawnX = map2x1 * TILESIZE - DOOR_BOOST
             spawnY = self.game.player.rect.y #Keep player's current y
         
-        #Untested :P
         if direction == DIRECTION_UP:
             spawnX = self.game.player.rect.x #Keep player's current x
             spawnY = map2y1 * TILESIZE - DOOR_BOOST 

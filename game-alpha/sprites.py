@@ -104,8 +104,9 @@ class Player(pg.sprite.Sprite):
         #Handle gate sprites: kill if touching with right key.
         for wall in hits: 
             if type(wall) == Gate:
-                if self.getHeldItem().itemType == wall.key:
-                    wall.kill()
+                if len(self.inventory) > 0: #Prevent NoneType error.
+                    if self.getHeldItem().itemType == wall.key:
+                        wall.kill()
 
         for wall in hits:  # if there are collisions
             #self.move_walls_x(wall)
@@ -127,8 +128,9 @@ class Player(pg.sprite.Sprite):
         #Handle gate sprites: kill if touching with right key.
         for wall in hits: 
             if type(wall) == Gate:
-                if self.getHeldItem().itemType == wall.key:
-                    wall.kill()
+                if len(self.inventory) > 0: #Prevent NoneType error.
+                    if self.getHeldItem().itemType == wall.key:
+                        wall.kill()
 
         for wall in hits:  # if there are collisions
             #self.move_walls_y(wall)
