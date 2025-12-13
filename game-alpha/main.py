@@ -126,7 +126,7 @@ class Game:
         self.item_sprites.add(itm)
 
         #Create mobs (Temporary):
-        m = Mob(self, 32, 32, 600, 500, settings.RED, 5, 10, True)
+        m = Mob(self, 32, 32, 600, 500, settings.RED, 5, 10)
         self.mob_sprites.add(m)
         self.all_sprites.add(m)
 

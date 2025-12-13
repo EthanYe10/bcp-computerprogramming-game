@@ -1,5 +1,7 @@
 import pygame as pg
 import settings
+import math
+import random
 # from main import Game
 
 vec = pg.math.Vector2
@@ -160,7 +162,7 @@ class Player(pg.sprite.Sprite):
 
 #Mobile entity that damages player
 class Mob(pg.sprite.Sprite):
-    def __init__(self, game, sizeX, sizeY, locX, locY, color, speed, health, followPlayer_bool = True):
+    def __init__(self, game, sizeX, sizeY, locX, locY, color, speed, health, followPlayer_bool = False):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((sizeX, sizeY))
         self.image.fill(color)  #White color for player
@@ -180,22 +182,20 @@ class Mob(pg.sprite.Sprite):
         self.vel = pg.Vector2() #Velocity vector
 
         if not self.followPlayer_bool: #Set diagonal direction
-            self.vel.x = -self.speed #todo: Make this vector random direction
-            self.vel.y = -self.speed
+            self.angle = random.uniform(0, 2 * math.pi)
+            self.vel.x = math.cos(self.angle) * self.speed #todo: Make this vector random direction
+            self.vel.y = math.sin(self.angle) * self.speed
 
     def wallCollide_y(self):
         #By Ethan Ye paraphrased from cozort.
         hits = pg.sprite.spritecollide(self, self.game.walls, False)  # get hits
         for wall in hits:  # if there are collisions
-            #self.move_walls_y(wall)
             if self.vel.y > 0:  # moving down
                 # set player position to left side of wall - player width
                 self.rect.y = wall.rect.top - self.rect.height
             if self.vel.y < 0:  # moving up
                 # set player position to right side of wall
                 self.rect.y = wall.rect.bottom
-            # set velocity to 0 to prevent further movement in that direction
-            self.vel.y = 0
             # update rect position
             self.rect.y = self.rect.y
         if len(hits) > 0: #Return true if wall was collided
@@ -214,26 +214,23 @@ class Mob(pg.sprite.Sprite):
         #Handle movement and collision on x axis
         self.rect.x += self.vel.x
         if self.wallCollide_x(): #If collided, bounce.
-            self.rect.x *= -1
+            self.vel.x *= -1
 
         #Handle movement and collision on y axis
         self.rect.y += self.vel.y
         if self.wallCollide_y(): #If collided, bounce.
-            self.rect.y *= -1
+            self.vel.y *= -1
 
     def wallCollide_x(self):
         #Code by Ethan Ye paraphrased from cozort. Copied in by Matthew
         hits = pg.sprite.spritecollide(self, self.game.walls, False)  # get hits
         for wall in hits:  # if there are collisions
-            #self.move_walls_x(wall)
             if self.vel.x > 0:  # moving right
                 # set player position to left side of wall - player width
                 self.rect.x = wall.rect.left - self.rect.width
             if self.vel.x < 0:  # moving left
                 # set player position to right side of wall
                 self.rect.x = wall.rect.right
-            # set velocity to 0 to prevent further movement in that direction
-            self.vel.x = 0
             # update rect position
             self.rect.x = self.rect.x
         if len(hits) > 0: #Return true if wall was collided
