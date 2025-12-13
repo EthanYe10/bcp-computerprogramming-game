@@ -132,21 +132,21 @@ class Game:
         #Create items:
 
         #Red key
-        img = pg.image.load(os.path.join("images", "blackKey.png")).convert_alpha()
-        itm = Item(self, img, 200, 200, self.map1_1_1, settings.ITEM_TYPE_KEY_BLACK)
+        img = pg.image.load(os.path.join("images", "redKey.png")).convert_alpha()
+        itm = Item(self, img, 200, 200, self.map1_1_1, settings.ITEM_TYPE_KEY_RED)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
         self.load_map(self.current_map)
 
         #Black key
-        img = pg.image.load(os.path.join("images", "redKey.png")).convert_alpha()
+        img = pg.image.load(os.path.join("images", "blackKey.png")).convert_alpha()
         itm = Item(self, img, 300, 300, self.map1_1_1, settings.ITEM_TYPE_KEY_BLACK)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
         #Yellow Key
         img = pg.image.load(os.path.join("images", "yellowKey.png")).convert_alpha()
-        itm = Item(self, img, 400, 400, self.map1_1_1, settings.ITEM_TYPE_KEY_BLACK)
+        itm = Item(self, img, 400, 400, self.map1_1_1, settings.ITEM_TYPE_KEY_YELLOW)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
@@ -155,6 +155,11 @@ class Game:
         itm = Item(self, img, 500, 500, self.map1_1_1, settings.ITEM_TYPE_WEAPON_TESLA)
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
+
+        #Gate images.
+        self.redGateImage = pg.image.load(os.path.join("images", "redGate.png")).convert_alpha()
+
+        self.yellowGateImage = pg.image.load(os.path.join("images", "yellowGate.png")).convert_alpha()
 
         #Create mobs (Temporary):
         m = Mob(self, 32, 32, 600, 500, settings.RED, 5, 10)
@@ -254,6 +259,10 @@ class Game:
         Loads the sprites and data from a Map object's data attribute
         Adapted from class Game
         Author: Ethan Ye"""
+        for wall in self.walls:
+            wall.kill()
+        #Kill every wall from all groups to prevent
+
         for row, tiles in enumerate(map.data):
             for col, tile in enumerate(tiles):
                 if tile == "1":
@@ -262,6 +271,10 @@ class Game:
                     _ = Wall(self, col, row, settings.DARK_GRAY)
                 if tile == "3":
                     _ = Wall(self, col, row, settings.DEEP_PURPLE)
+                if tile == "r":
+                    _ = Gate(self, col, row, self.redGateImage, settings.ITEM_TYPE_KEY_RED)
+                if tile == "y":
+                    _ = Gate(self, col, row, self.yellowGateImage, settings.ITEM_TYPE_KEY_YELLOW)
                     
 g = Game()
 g.new()

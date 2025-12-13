@@ -57,7 +57,7 @@ class Player(pg.sprite.Sprite):
             hits = pg.sprite.spritecollide(self, self.game.item_sprites, False) #Returns list of item sprites touching player
             #from https://www.pygame.org/docs/ref/sprite.html#pygame.sprite.spritecollide
             for item in hits:
-                if not (item in self.inventory) and item.map == self.game.current_map: #Avoid items already in inventory, not in current map (thus hidden)
+                if not (item in self.inventory) and item.map == self.game.current_map and len(self.inventory) < settings.PLAYER_ITEM_CAPACITY: #Avoid items already in inventory, not in current map (thus hidden), if item capacity is full
                     self.inventory.add(item) #Add first item found
                     self.currentItem = len(self.inventory) - 1 #Immediatly set current item to the new item
                     break #Prevent picking up several items at once
@@ -98,8 +98,15 @@ class Player(pg.sprite.Sprite):
                     self.game.projectile_sprites.add(p)
 
     def wallCollide_x(self):
-        #Code by Ethan Ye paraphrased from cozort. Copied in by Matthew
+        #Code by Ethan Ye paraphrased from cozort. Copied in, edited by Matthew
         hits = pg.sprite.spritecollide(self, self.game.walls, False)  # get hits
+
+        #Handle gate sprites: kill if touching with right key.
+        for wall in hits: 
+            if type(wall) == Gate:
+                if self.getHeldItem().itemType == wall.key:
+                    wall.kill()
+
         for wall in hits:  # if there are collisions
             #self.move_walls_x(wall)
             if self.vel.x > 0:  # moving right
@@ -116,6 +123,13 @@ class Player(pg.sprite.Sprite):
     def wallCollide_y(self):
         #By Ethan Ye paraphrased from cozort.
         hits = pg.sprite.spritecollide(self, self.game.walls, False)  # get hits
+
+        #Handle gate sprites: kill if touching with right key.
+        for wall in hits: 
+            if type(wall) == Gate:
+                if self.getHeldItem().itemType == wall.key:
+                    wall.kill()
+
         for wall in hits:  # if there are collisions
             #self.move_walls_y(wall)
             if self.vel.y > 0:  # moving down
@@ -324,7 +338,6 @@ class Item(pg.sprite.Sprite):
         #If in player's inventory, go to player's location.
         if self in self.game.player.inventory:
             self.rect.topleft = (self.game.player.rect.x,self.game.player.rect.y)
-            
                 
         # if item is in inventory, only show if it's held
         if self in self.game.player.inventory:
@@ -339,8 +352,8 @@ class Item(pg.sprite.Sprite):
             else:
                 self.image = self.clearImage
             
-
-class Wall(pg.sprite.Sprite):
+#Weak sprites for easy memory management
+class Wall(pg.sprite.WeakSprite):
     """
     Wall class
     adapted from class code by Ethan Ye to include wall colors
@@ -358,3 +371,24 @@ class Wall(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x * settings.TILESIZE
         self.rect.y = y * settings.TILESIZE
+
+class Gate(pg.sprite.WeakSprite):
+    """
+    Gate class
+    adapted from code adapted from class code by Ethan Ye to include wall colors
+    """
+    def __init__(self, game, x, y, image, key):
+        self.game = game
+        self.groups = game.all_sprites, game.walls
+        pg.sprite.Sprite.__init__(
+            self, self.groups
+        )  # initialize gate using Sprite class init function
+
+        # gate properties (similar to wall be there's a texture)
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = x * settings.TILESIZE
+        self.rect.y = y * settings.TILESIZE
+
+        #The key needed to unlock this door.
+        self.key = key
