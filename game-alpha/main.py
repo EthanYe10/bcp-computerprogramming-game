@@ -22,6 +22,13 @@ class Game:
         self.map1_1_3 = utils.Map(os.path.join("maps", "map1_1_3.txt"), self, fog=False)
         self.map1_0_4 = utils.Map(os.path.join("maps", "map1_0_4.txt"), self, fog=False)
         self.map1_1_4 = utils.Map(os.path.join("maps", "map1_1_4.txt"), self, fog=False)
+        self.map1_2_4 = utils.Map(os.path.join("maps", "map1_2_4.txt"), self, fog=False)
+        self.map1_2_5 = utils.Map(os.path.join("maps", "map1_2_5.txt"), self, fog=False)
+        self.map1_2_6 = utils.Map(os.path.join("maps", "map1_2_6.txt"), self, fog=False)
+        self.map1_3_5 = utils.Map(os.path.join("maps", "map1_3_5.txt"), self, fog=False)
+        self.map1_3_2 = utils.Map(os.path.join("maps", "map1_3_2.txt"), self, fog=False)
+        self.map1_0_5 = utils.Map(os.path.join("maps", "map1_0_5.txt"), self, fog=False)
+        self.map1_0_2 = utils.Map(os.path.join("maps", "map1_0_2.txt"), self, fog=False)
 
         self.map_manager.add_map(self.map1_1_1)
         self.map_manager.add_map(self.map1_2_1)
@@ -29,6 +36,12 @@ class Game:
         self.map_manager.add_map(self.map1_1_3)
         self.map_manager.add_map(self.map1_0_4)
         self.map_manager.add_map(self.map1_1_4)
+        self.map_manager.add_map(self.map1_2_4)
+        self.map_manager.add_map(self.map1_2_5)
+        self.map_manager.add_map(self.map1_3_5)
+        self.map_manager.add_map(self.map1_3_2)
+        self.map_manager.add_map(self.map1_0_5)
+        self.map_manager.add_map(self.map1_0_2)
 
         self.map_manager.add_connection(utils.MapConnection(
             self.map1_1_1, self.map1_2_1, # the two maps
@@ -63,6 +76,24 @@ class Game:
             settings.DIRECTION_UP))
 
         self.map_manager.add_connection(utils.MapConnection(self.map1_0_4, self.map1_1_4, *settings.GENERIC_DOOR_RIGHT)) 
+        self.map_manager.add_connection(utils.MapConnection(self.map1_2_4, self.map1_1_4, *settings.GENERIC_DOOR_LEFT)) 
+        
+        self.map_manager.add_connection(utils.MapConnection(
+            self.map1_1_3, self.map1_2_4, # the two maps
+            12, 0,   # start of door of first map
+            24, 0, # end of door of first map
+            12, 18,   # start of door of second map
+            24, 18, # end of door of second map
+            settings.DIRECTION_UP))
+
+        self.map_manager.add_connection(utils.MapConnection(self.map1_2_4, self.map1_2_5, *settings.GENERIC_DOOR_UP)) 
+        self.map_manager.add_connection(utils.MapConnection(self.map1_2_5, self.map1_2_6, *settings.GENERIC_DOOR_UP)) 
+        self.map_manager.add_connection(utils.MapConnection(self.map1_2_5, self.map1_3_5, *settings.GENERIC_DOOR_RIGHT))
+        self.map_manager.add_connection(utils.MapConnection(self.map1_3_5, self.map1_3_2, *settings.GENERIC_DOOR_DOWN))
+        self.map_manager.add_connection(utils.MapConnection(self.map1_3_2, self.map1_1_2, *settings.GENERIC_DOOR_LEFT))
+        self.map_manager.add_connection(utils.MapConnection(self.map1_0_4, self.map1_0_5, *settings.GENERIC_DOOR_UP))
+        self.map_manager.add_connection(utils.MapConnection(self.map1_1_2, self.map1_0_2, *settings.GENERIC_DOOR_LEFT))
+        
         #Using tuples that are unpacked and used as parameters for brevity.
         """
         in this example the door will be at (0,0) to (10,10) on the first map and (0,0) to (10,10) on the second map
