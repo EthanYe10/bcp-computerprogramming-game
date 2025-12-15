@@ -123,6 +123,8 @@ class Game:
 
         self.mob_sprites = pg.sprite.Group() #Sprite group for mobs
 
+        self.HUD_sprites = pg.sprite.Group() #Sprite group for HUD elements
+
         #Instantiate Player, add to sprite groups.
         self.player = Player(self, 200, 200) #Store player reference for later access
         self.input_sprites.add(self.player)
@@ -173,6 +175,10 @@ class Game:
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
+        healthMeter = HealthMeter(self)
+        self.HUD_sprites.add(healthMeter)
+        self.all_sprites.add(healthMeter)
+
     def input(self):
         #Loop through all sprites that take input and scan for input.
         for sprite in self.input_sprites:
@@ -194,7 +200,6 @@ class Game:
             self.all_sprites.update()
                 
         self.check_map_transitions()
-
 
     def draw(self):
         if self.current_map.fog:
@@ -229,6 +234,7 @@ class Game:
             self.projectile_sprites.draw(self.screen)
             self.walls.draw(self.screen)
             self.mob_sprites.draw(self.screen)
+            self.HUD_sprites.draw(self.screen)
         pg.display.flip()
 
     def clear_map(self):

@@ -2,6 +2,7 @@ import pygame as pg
 import settings
 import math
 import random
+import os
 # from main import Game
 
 vec = pg.math.Vector2
@@ -22,6 +23,9 @@ class Player(pg.sprite.Sprite):
 
         self.inventory = pg.sprite.Group() #Inintialize inventory (a sprite group of item sprites)
         self.currentItem = 0 #Set current item to 0.
+
+        self.health = settings.PLAYER_START_HEALTH #Player health. decrements each time an enemy touches player.
+        self.invincibilityCountdown = 0 #While positive, player is invulnerable. Set to  
 
         #These make sure the actions associated with each key only happen once per press, not autofire while held.
         self.Epressed = False
@@ -176,12 +180,32 @@ class Player(pg.sprite.Sprite):
             self.game.all_sprites.add(fr) #Add to all_sprites group
             self.game.effect_sprites.add(fr) #Add to effect_sprites group
 
+class HealthMeter(pg.sprite.Sprite):
+    def __init__(self, game):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((settings.PLAYER_METER_LENGTH, settings.PLAYER_METER_LENGTH))
+        self.rect = pg.Rect(0,0, settings.PLAYER_METER_LENGTH, settings.PLAYER_METER_LENGTH)
+        self.rect.topleft = (0, 0)
+
+        self.game = game
+
+        self.meterImages = {}
+        for i in range(1, settings.PLAYER_MAX_HEALTH+1):
+            self.meterImages[i] = pg.image.load(os.path.join("images", "healthMeter-"+str(i)+".png")).convert_alpha()
+
+    def update(self):
+        self.image = self.meterImages[self.game.player.health]
+
+        #Set the meter to be where we want it on the player
+        self.rect.x = self.game.player.rect.x + settings.PLAYER_SIZE - settings.PLAYER_METER_LENGTH
+        self.rect.y = self.game.player.rect.y + settings.PLAYER_SIZE - settings.PLAYER_METER_LENGTH
+
 #Mobile entity that damages player
 class Mob(pg.sprite.Sprite):
     def __init__(self, game, sizeX, sizeY, locX, locY, color, speed, health, followPlayer_bool = False):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((sizeX, sizeY))
-        self.image.fill(color)  #White color for player
+        self.image.fill(color)  #White color for mob
         self.rect = self.image.get_rect()
         self.rect.topleft = (locX, locY)
 
