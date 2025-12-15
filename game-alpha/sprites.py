@@ -97,7 +97,7 @@ class Player(pg.sprite.Sprite):
             item = self.getHeldItem()
             if len(self.inventory) > 0: #Prevent crash from if statement getting .map of NoneType.
                 if item.itemType == settings.ITEM_TYPE_WEAPON_TESLA and not (self.vel.x == 0 and self.vel.y == 0): #To make sure there's an itemType attribute. Also make sure player isnt standing still for bullet to fire
-                    p = Projectile(self.game, self.vel, settings.WHITE, 20, 2, self.rect.x, self.rect.y, 5)
+                    p = Projectile(self.game, self.vel, settings.WHITE, 20, 2, self.rect.x, self.rect.y, 5, 1)
                     self.game.all_sprites.add(p)
                     self.game.projectile_sprites.add(p)
 
@@ -243,25 +243,6 @@ class Mob(pg.sprite.Sprite):
         else:
             return False
 
-    def update(self):
-        print(self.rect.x, self.rect.y)
-        if self.followPlayer_bool: #If mob is set to follow player
-            direction = pg.Vector2(self.game.player.rect.center) - pg.Vector2(self.rect.center) #Get vector pointing from mob to player
-            if direction.length() != 0:
-                direction = direction.normalize() #Normalize to unit vector
-                self.vel = direction * self.speed #Set velocity vector to point at player with magnitude of speed
-            else:
-                self.vel = pg.Vector2() #If on top of player, set velocity to 0.
-        #Handle movement and collision on x axis
-        self.rect.x += self.vel.x
-        if self.wallCollide_x(): #If collided, bounce.
-            self.vel.x *= -1
-
-        #Handle movement and collision on y axis
-        self.rect.y += self.vel.y
-        if self.wallCollide_y(): #If collided, bounce.
-            self.vel.y *= -1
-
     def wallCollide_x(self):
         #Code by Ethan Ye paraphrased from cozort. Copied in by Matthew
         hits = pg.sprite.spritecollide(self, self.game.walls, False)  # get hits
@@ -278,6 +259,35 @@ class Mob(pg.sprite.Sprite):
             return True
         else:
             return False
+    def die(self):
+        self.kill()
+
+    def update(self):
+        print(self.rect.x, self.rect.y)
+        if self.followPlayer_bool: #If mob is set to follow player
+            direction = pg.Vector2(self.game.player.rect.center) - pg.Vector2(self.rect.center) #Get vector pointing from mob to player
+            if direction.length() != 0:
+                direction = direction.normalize() #Normalize to unit vector
+                self.vel = direction * self.speed #Set velocity vector to point at player with magnitude of speed
+            else:
+                self.vel = pg.Vector2() #If on top of player, set velocity to 0.
+        #Handle movement and collision on x axis
+        self.rect.x += self.vel.x
+        if self.wallCollide_x(): #If collided, bounce.
+            self.vel.x *= -1
+        #
+        #Handle movement and collision on y axis
+        self.rect.y += self.vel.y
+        if self.wallCollide_y(): #If collided, bounce.
+            self.vel.y *= -1
+        
+        #Handle collision with a projectile(s)
+        hits = pg.sprite.spritecollide(self, self.game.projectile_sprites, True)
+        for projectile in hits:
+            self.health -= projectile.damage
+        
+        if self.health < 0:
+            self.die()
 
 #Fading rectangle
 class FadeRect(pg.sprite.Sprite):
@@ -305,7 +315,7 @@ class Projectile(pg.sprite.Sprite):
     Author: Matthew Sheyda
     TODO: short description
     """
-    def __init__(self, game, playerVelocity, color, speed, countdownSeconds, xLocation, yLocation, size):
+    def __init__(self, game, playerVelocity, color, speed, countdownSeconds, xLocation, yLocation, size, damage):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((size, size))
         self.image.fill(color)  #Color of the rectangle
@@ -315,6 +325,8 @@ class Projectile(pg.sprite.Sprite):
         self.countdownSeconds = countdownSeconds
 
         self.game = game #Reference to the game to detect collidable entities
+
+        self.damage = damage #Amount by which the bullet will damage an entity upon collision.
 
         #Divide by PLAYER_SPEED (to make all members 1), multiply by speed to get bullet velocity.
         self.velocity = pg.Vector2()
@@ -336,7 +348,7 @@ class Projectile(pg.sprite.Sprite):
 class BasicBullet(Projectile):
     def __init__(self, game, playerVelocity, x, y):
         #Construct bullet with parameters of this type of bullet:
-        super().__init__(game, playerVelocity, settings.WHITE, 20, 3, x, y, 5)
+        super().__init__(game, playerVelocity, settings.WHITE, 20, 3, x, y, 5, 1)
     
     def update():
         pass
