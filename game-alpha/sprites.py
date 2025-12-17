@@ -108,11 +108,14 @@ class Player(pg.sprite.Sprite):
         #Handle gate sprites: kill if touching with right key.
         for wall in hits: 
             if type(wall) == Gate:
-                if len(self.inventory) > 0: #Prevent NoneType error.
-                    if self.getHeldItem().itemType == wall.key:
-                        wall.kill()
+                if len(self.inventory) > 0 and self.getHeldItem().itemType == wall.key:
+                    wall.delete()
+                elif wall.stateVar:
+                    continue
 
         for wall in hits:  # if there are collisions
+            if type(wall) == Gate and wall.stateVar: #If gate is already open, skip collision
+                continue
             #self.move_walls_x(wall)
             if self.vel.x > 0:  # moving right
                 # set player position to left side of wall - player width
@@ -132,11 +135,14 @@ class Player(pg.sprite.Sprite):
         #Handle gate sprites: kill if touching with right key.
         for wall in hits: 
             if type(wall) == Gate:
-                if len(self.inventory) > 0: #Prevent NoneType error.
-                    if self.getHeldItem().itemType == wall.key:
-                        wall.kill()
+                if len(self.inventory) > 0 and self.getHeldItem().itemType == wall.key: 
+                    wall.delete()
+                elif wall.stateVar:
+                    continue
 
         for wall in hits:  # if there are collisions
+            if type(wall) == Gate and wall.stateVar: #If gate is already open, skip collision
+                continue
             #self.move_walls_y(wall)
             if self.vel.y > 0:  # moving down
                 # set player position to left side of wall - player width
@@ -404,7 +410,7 @@ class Gate(pg.sprite.WeakSprite):
     Gate class
     adapted from code adapted from class code by Ethan Ye to include wall colors
     """
-    def __init__(self, game, x, y, image, key):
+    def __init__(self, game, x, y, image, key, stateVar):
         self.game = game
         self.groups = game.all_sprites, game.walls
         pg.sprite.Sprite.__init__(
@@ -416,6 +422,13 @@ class Gate(pg.sprite.WeakSprite):
         self.rect = self.image.get_rect()
         self.rect.x = x * settings.TILESIZE
         self.rect.y = y * settings.TILESIZE
+        self.stateVar = stateVar
 
         #The key needed to unlock this door.
         self.key = key
+    
+    def delete(self):
+        self.stateVar = True
+        self.image.set_alpha(0)  #Make gate invisible
+        # instead of killing, 
+        pass

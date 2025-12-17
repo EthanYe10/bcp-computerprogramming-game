@@ -3,6 +3,7 @@ import settings
 import utils
 from sprites import *
 import os
+from state import *
 
 class Game:
     def __init__(self):
@@ -289,15 +290,15 @@ class Game:
                 if tile == "3": #Wall (Dark Purple)
                     _ = Wall(self, col, row, settings.DEEP_PURPLE)
                 if tile == "r": #Gate (Red)
-                    _ = Gate(self, col, row, self.redGateImage, settings.ITEM_TYPE_KEY_RED)
+                    _ = Gate(self, col, row, self.redGateImage, settings.ITEM_TYPE_KEY_RED, stateVar=RED_GATE_UNLOCKED)
                 if tile == "y": #Gate (Yellow)
-                    _ = Gate(self, col, row, self.yellowGateImage, settings.ITEM_TYPE_KEY_YELLOW)
+                    _ = Gate(self, col, row, self.yellowGateImage, settings.ITEM_TYPE_KEY_YELLOW, stateVar=YELLOW_GATE_UNLOCKED)
                 if tile == "o": #Gate (Orange)
-                    _ = Gate(self, col, row, self.orangeGateImage, settings.ITEM_TYPE_KEY_ORANGE)
+                    _ = Gate(self, col, row, self.orangeGateImage, settings.ITEM_TYPE_KEY_ORANGE, stateVar=ORANGE_GATE_UNLOCKED)
                 if tile == "b": #Gate (Blue)
-                    _ = Gate(self, col, row, self.blackGateImage, settings.ITEM_TYPE_KEY_BLACK)
+                    _ = Gate(self, col, row, self.blackGateImage, settings.ITEM_TYPE_KEY_BLACK, stateVar=BLUE_GATE_UNLOCKED)
                 if tile == "p": #Gate (Purple)
-                    _ = Gate(self, col, row, self.purpleGateImage, settings.ITEM_TYPE_KEY_PURPLE)
+                    _ = Gate(self, col, row, self.purpleGateImage, settings.ITEM_TYPE_KEY_PURPLE, stateVar=PURPLE_GATE_UNLOCKED)
                 if tile == "e": #Enemy (Standard)
                     m = Mob(self, 48, 48, col*settings.TILE_SIZE, row*settings.TILE_SIZE, settings.RED, 3, 10, followPlayer_bool=True)
                     self.mob_sprites.add(m)
