@@ -165,6 +165,9 @@ class Player(pg.sprite.Sprite):
             # update rect position
             self.rect.y = self.rect.y
 
+    def die(self):
+        self.kill()
+
     def update(self):
         #Move based on self.vel vector based on input
 
@@ -188,7 +191,7 @@ class Player(pg.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom > settings.WINDOW_HEIGHT:
             self.rect.bottom = settings.WINDOW_HEIGHT
-        print(self.rect.x // settings.TILESIZE, self.rect.y // settings.TILESIZE, self.game.current_map.filename, self.health)
+        print(self.rect.x // settings.TILESIZE, self.rect.y // settings.TILESIZE, self.game.current_map.filename, self.health, self.invincibilityCountdown)
         # print(self.inventory)
 
         if not (self.vel.x == 0 and self.vel.y == 0): #If the player is moving, create a fading rectangle for trail effect.
@@ -199,7 +202,7 @@ class Player(pg.sprite.Sprite):
         #Check if touching mob, if so, take damage, activate temporary invincibility
         hits = pg.sprite.spritecollide(self, self.game.mob_sprites, False)
         #and self.invincibilityCountdown < 0
-        if len(hits) > 1 and self.invincibilityCountdown < 0: #If any mob sprites were hit, damage was taken. If invincibilityCountdown is positive, invincibility is active.
+        if len(hits) > 0 and self.invincibilityCountdown < 0: #If any mob sprites were hit, damage was taken. If invincibilityCountdown is positive, invincibility is active.
             self.health -= 1 #Decrement health
             self.invincibilityCountdown = settings.PLAYER_DAMAGE_INCINCIBILITY_DURATION #Activate invincibility
         
@@ -211,6 +214,10 @@ class Player(pg.sprite.Sprite):
             self.image.fill(settings.WHITE)
         else:
             self.image.fill(settings.DARK_GRAY)
+
+        #Detect if player should die:
+        if self.health <= 0:
+            self.die()
 
 
 class HealthMeter(pg.sprite.Sprite):
