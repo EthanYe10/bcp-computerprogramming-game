@@ -172,13 +172,30 @@ class Player(pg.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom > settings.WINDOW_HEIGHT:
             self.rect.bottom = settings.WINDOW_HEIGHT
-        print(self.rect.x // settings.TILESIZE, self.rect.y // settings.TILESIZE, self.game.current_map.filename)
+        print(self.rect.x // settings.TILESIZE, self.rect.y // settings.TILESIZE, self.game.current_map.filename, self.health)
         # print(self.inventory)
 
         if not (self.vel.x == 0 and self.vel.y == 0): #If the player is moving, create a fading rectangle for trail effect.
             fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE)
             self.game.all_sprites.add(fr) #Add to all_sprites group
             self.game.effect_sprites.add(fr) #Add to effect_sprites group
+
+        #Check if touching mob, if so, take damage, activate temporary invincibility
+        hits = pg.sprite.spritecollide(self, self.game.mob_sprites, False)
+        #and self.invincibilityCountdown < 0
+        if len(hits) > 1 and self.invincibilityCountdown < 0: #If any mob sprites were hit, damage was taken. If invincibilityCountdown is positive, invincibility is active.
+            self.health -= 1 #Decrement health
+            self.invincibilityCountdown = settings.PLAYER_DAMAGE_INCINCIBILITY_DURATION #Activate invincibility
+        
+        #Handle player invincibility and countdown
+        self.invincibilityCountdown -= self.game.deltaTime #Tick down by delta time passed.
+
+        #Set color to invincibility color and back.
+        if self.invincibilityCountdown < 0:
+            self.image.fill(settings.WHITE)
+        else:
+            self.image.fill(settings.DARK_GRAY)
+
 
 class HealthMeter(pg.sprite.Sprite):
     def __init__(self, game):
@@ -190,11 +207,12 @@ class HealthMeter(pg.sprite.Sprite):
         self.game = game
 
         self.meterImages = {}
-        for i in range(1, settings.PLAYER_MAX_HEALTH+1):
-            self.meterImages[i] = pg.image.load(os.path.join("images", "healthMeter-"+str(i)+".png")).convert_alpha()
+        for i in range(1, settings.PLAYER_MAX_HEALTH+1): #These index values are to be consistent with the file names.
+            self.meterImages[i] = pg.image.load(os.path.join("images", "healthMeter-"+str(i)+".png")).convert_alpha() #Load corresponding health meter image.
 
     def update(self):
-        self.image = self.meterImages[self.game.player.health]
+        if self.game.player.health > 0 and self.game.player.health < settings.PLAYER_MAX_HEALTH+1: #Prevent index out of range
+            self.image = self.meterImages[self.game.player.health]
 
         #Set the meter to be where we want it on the player
         self.rect.x = self.game.player.rect.x + settings.PLAYER_SIZE - settings.PLAYER_METER_LENGTH
@@ -263,7 +281,7 @@ class Mob(pg.sprite.Sprite):
         self.kill()
 
     def update(self):
-        print(self.rect.x, self.rect.y)
+        #print(self.rect.x, self.rect.y) Print for debug
         if self.followPlayer_bool: #If mob is set to follow player
             direction = pg.Vector2(self.game.player.rect.center) - pg.Vector2(self.rect.center) #Get vector pointing from mob to player
             if direction.length() != 0:
@@ -361,7 +379,7 @@ class Item(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.itemImage = itemImage
 
-        self.clearImage = self.image = pg.Surface((16, 16), pg.SRCALPHA) #pg.SRCALPHA allows transparancy
+        self.clearImage = self.image = pg.Surface((settings.ITEM_SIDE_LENGTH, settings.ITEM_SIDE_LENGTH), pg.SRCALPHA) #pg.SRCALPHA allows transparancy
         self.clearImage.fill(settings.TRANSPARANT)
 
         self.image = itemImage #Image representing the item
