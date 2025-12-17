@@ -166,6 +166,29 @@ class Player(pg.sprite.Sprite):
             self.rect.y = self.rect.y
 
     def die(self):
+        #Explosion effect upon death
+
+        #bottom right fadeRect
+        fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE, xVelocity=10, yVelocity=10)
+        self.game.all_sprites.add(fr) #Add to all_sprites group
+        self.game.effect_sprites.add(fr) #Add to effect_sprites group
+
+        #top right fadeRect
+        fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE, xVelocity=-10, yVelocity=10)
+        self.game.all_sprites.add(fr) #Add to all_sprites group
+        self.game.effect_sprites.add(fr) #Add to effect_sprites group
+
+        #top left fadeRect
+        fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE, xVelocity=-10, yVelocity=-10)
+        self.game.all_sprites.add(fr) #Add to all_sprites group
+        self.game.effect_sprites.add(fr) #Add to effect_sprites group
+
+        #bottom left fadeRect
+        fr = FadeRect(self.game, (255,255,255,150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, settings.PLAYER_SIZE, settings.PLAYER_SIZE, xVelocity=10, yVelocity=-10)
+        self.game.all_sprites.add(fr) #Add to all_sprites group
+        self.game.effect_sprites.add(fr) #Add to effect_sprites group
+
+
         self.kill()
 
     def update(self):
@@ -340,7 +363,7 @@ class FadeRect(pg.sprite.Sprite):
     Author: Matthew Sheyda
     TODO: short description
     """
-    def __init__(self, game, color, decayRate, xLocation, yLocation, xSize, ySize):
+    def __init__(self, game, color, decayRate, xLocation, yLocation, xSize, ySize, xVelocity = 0, yVelocity = 0):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((xSize, ySize), pg.SRCALPHA) #pg.SRCALPHA allows there to be an alpha channel in the image
         self.image.fill(color)  #Color of the rectangle
@@ -348,8 +371,15 @@ class FadeRect(pg.sprite.Sprite):
         self.rect.topleft = (xLocation, yLocation)
 
         self.decayRate = decayRate #amount by which alpha is of the rectangle decreased, per frame
-    
+        
+        #Movement velocity
+        self.xVelocity = xVelocity 
+        self.yVelocity = yVelocity 
+
     def update(self):
+        self.rect.x += self.xVelocity
+        self.rect.y += self.yVelocity
+
         if not self.image.get_alpha() < self.decayRate: #If the current alpha of the image is not lower than the decay rate
             self.image.set_alpha(self.image.get_alpha()-self.decayRate) #Fade out by set decayRate
         else:
