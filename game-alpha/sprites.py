@@ -231,6 +231,10 @@ class HealthMeter(pg.sprite.Sprite):
         self.rect.x = self.game.player.rect.x + settings.PLAYER_SIZE - settings.PLAYER_METER_LENGTH
         self.rect.y = self.game.player.rect.y + settings.PLAYER_SIZE - settings.PLAYER_METER_LENGTH
 
+        #Handle player death
+        if self.game.player.health <= 0:
+            self.kill()
+
 #Mobile entity that damages player
 class Mob(pg.sprite.Sprite):
     def __init__(self, game, sizeX, sizeY, locX, locY, color, speed, health, followPlayer_bool = False):
