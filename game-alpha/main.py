@@ -126,6 +126,8 @@ class Game:
 
         self.HUD_sprites = pg.sprite.Group() #Sprite group for HUD elements
 
+        self.background_sprites = pg.sprite.Group()
+
         #Instantiate Player, add to sprite groups.
         self.player = Player(self, 200, 200) #Store player reference for later access
         self.input_sprites.add(self.player)
@@ -176,10 +178,10 @@ class Game:
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
+        #Instantiate health meter
         healthMeter = HealthMeter(self)
         self.HUD_sprites.add(healthMeter)
         self.all_sprites.add(healthMeter)
-
     def input(self):
         #Loop through all sprites that take input and scan for input.
         for sprite in self.input_sprites:
@@ -199,7 +201,13 @@ class Game:
             self.visible_sprites.update()
         else:
             self.all_sprites.update()
-                
+
+        #Handle Background. Spawn a baground blob if there aren't enough
+        if len(self.background_sprites) < settings.BACKGROUND_SPRITE_COUNT:
+            fr = FadeRect(self, (*settings.LIGHT_BLUE,random.randint(150,220)), settings.PLAYER_TRAIL_DECAY_RATE, random.randint(0,settings.WINDOW_WIDTH), random.randint(0,settings.WINDOW_HEIGHT), random.randint(20,100), random.randint(20,100), random.randint(-5,5), random.randint(-5,5))
+            self.all_sprites.add(fr) #Add to all_sprites group
+            self.background_sprites.add(fr) #Add to effect_sprites group
+
         self.check_map_transitions()
 
     def draw(self):
@@ -229,6 +237,7 @@ class Game:
         else:
             self.screen.fill(settings.BLUE)
             #Draw sprites in specific order to prevent layering issues.
+            self.background_sprites.draw(self.screen)
             self.effect_sprites.draw(self.screen)
             self.input_sprites.draw(self.screen)
             self.item_sprites.draw(self.screen)

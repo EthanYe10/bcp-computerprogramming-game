@@ -188,7 +188,6 @@ class Player(pg.sprite.Sprite):
         self.game.all_sprites.add(fr) #Add to all_sprites group
         self.game.effect_sprites.add(fr) #Add to effect_sprites group
 
-
         self.kill()
 
     def update(self):
@@ -287,6 +286,11 @@ class Mob(pg.sprite.Sprite):
         #Boolean value that controls the behavior of the mob. False: Bounces around Map. True: Follows player.
         self.followPlayer_bool = followPlayer_bool
 
+        #Size and color variables for future reference
+        self.sizeX = sizeX
+        self.sizeY = sizeY
+        self.color = color
+
         self.vel = pg.Vector2() #Velocity vector
 
         if not self.followPlayer_bool: #Set diagonal direction
@@ -328,6 +332,28 @@ class Mob(pg.sprite.Sprite):
         else:
             return False
     def die(self):
+        #Explosion effect upon death
+
+        #bottom right fadeRect
+        fr = FadeRect(self.game, (*self.color, 150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, self.sizeX, self.sizeY, xVelocity=10, yVelocity=10)
+        self.game.all_sprites.add(fr) #Add to all_sprites group
+        self.game.effect_sprites.add(fr) #Add to effect_sprites group
+
+        #top right fadeRect
+        fr = FadeRect(self.game, (*self.color, 150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, self.sizeX, self.sizeY, xVelocity=-10, yVelocity=10)
+        self.game.all_sprites.add(fr) #Add to all_sprites group
+        self.game.effect_sprites.add(fr) #Add to effect_sprites group
+
+        #top left fadeRect
+        fr = FadeRect(self.game, (*self.color, 150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, self.sizeX, self.sizeY, xVelocity=-10, yVelocity=-10)
+        self.game.all_sprites.add(fr) #Add to all_sprites group
+        self.game.effect_sprites.add(fr) #Add to effect_sprites group
+
+        #bottom left fadeRect
+        fr = FadeRect(self.game, (*self.color, 150), settings.PLAYER_TRAIL_DECAY_RATE, self.rect.x, self.rect.y, self.sizeX, self.sizeY, xVelocity=10, yVelocity=-10)
+        self.game.all_sprites.add(fr) #Add to all_sprites group
+        self.game.effect_sprites.add(fr) #Add to effect_sprites group
+
         self.kill()
 
     def update(self):

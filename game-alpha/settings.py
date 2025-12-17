@@ -1,5 +1,6 @@
-# resolution of each tile
-TILESIZE = 32
+#This files stores an abundance of well-defined constants we will require easy access to over the course of development.
+
+TILESIZE = 32 #resolution of each tile
 
 PLAYER_SPEED = 10
 
@@ -21,6 +22,7 @@ RED = (255, 0, 0)
 KING_CRIMSON = (127, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+LIGHT_BLUE = (50, 50, 255)
 LIGHT_GRAY = (200, 200, 200)
 DARK_GRAY = (100, 100, 100)
 WHITE_OPAQUE = (255, 255, 255, 255)
@@ -65,3 +67,5 @@ GENERIC_DOOR_RIGHT = 24, 0, 24, 17, 0, 0, 0, 17, DIRECTION_RIGHT
 GENERIC_DOOR_LEFT =  0, 0, 0, 17, 24, 0, 24, 17, DIRECTION_LEFT
 GENERIC_DOOR_UP = 0, 0, 24, 0, 0, 18, 24, 18, DIRECTION_UP
 GENERIC_DOOR_DOWN = 0, 18, 24, 18, 0, 0, 24, 0, DIRECTION_DOWN
+
+BACKGROUND_SPRITE_COUNT = 200
