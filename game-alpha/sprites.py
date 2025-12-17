@@ -98,7 +98,7 @@ class Player(pg.sprite.Sprite):
             item = self.getHeldItem()
             if len(self.inventory) > 0: #Prevent crash from if statement getting .map of NoneType.
                 if item.itemType == settings.ITEM_TYPE_WEAPON_TESLA and not (self.vel.x == 0 and self.vel.y == 0): #To make sure there's an itemType attribute. Also make sure player isnt standing still for bullet to fire
-                    p = Projectile(self.game, self.vel, settings.WHITE, 20, 2, self.rect.x, self.rect.y, 5, 1)
+                    p = Projectile(self.game, self.vel, settings.WHITE, 15, 2, self.rect.x, self.rect.y, 5, 1)
                     self.game.all_sprites.add(p)
                     self.game.projectile_sprites.add(p)
 
@@ -365,7 +365,7 @@ class Projectile(pg.sprite.Sprite):
         self.image = pg.Surface((size, size))
         self.image.fill(color)  #Color of the rectangle
         self.rect = self.image.get_rect()
-        self.rect.topleft = (xLocation, yLocation)
+        self.rect.topleft = (xLocation+1, yLocation+1) # Placed slightly towards bottom right to prevent phasing through
 
         self.countdownSeconds = countdownSeconds
 
@@ -381,7 +381,6 @@ class Projectile(pg.sprite.Sprite):
         self.velocity.y = (self.velocity.y/settings.PLAYER_SPEED)*speed
 
         #Doing it this way preserves the direction of the velocity.
-
     def update(self):
         self.rect.x += self.velocity.x
         self.rect.y += self.velocity.y
@@ -390,6 +389,13 @@ class Projectile(pg.sprite.Sprite):
 
         if self.countdownSeconds < 0:
             self.kill() #Kill self once countdown ends
+
+        #Destroy self if hit a wall
+        hits = pg.sprite.spritecollide(self, self.game.walls, False)
+        if len(hits) > 0:
+            self.kill()
+        
+
 class BasicBullet(Projectile):
     def __init__(self, game, playerVelocity, x, y):
         #Construct bullet with parameters of this type of bullet:
