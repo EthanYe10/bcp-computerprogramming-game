@@ -1,5 +1,7 @@
-RED_GATE_UNLOCKED = False
-BLUE_GATE_UNLOCKED = False
-YELLOW_GATE_UNLOCKED = False
-ORANGE_GATE_UNLOCKED = False
-PURPLE_GATE_UNLOCKED = False
+GATE_STATES = {
+    "red": False, 
+    "blue": False,
+    "yellow": False,
+    "orange": False,
+    "purple": False
+}
