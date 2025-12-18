@@ -652,3 +652,4 @@ class Gate(pg.sprite.WeakSprite):
 
     def update(self):
         self.stateVar = GATE_STATES[self.color]
+        
