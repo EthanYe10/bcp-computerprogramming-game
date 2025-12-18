@@ -18,11 +18,18 @@ class Game:
         self.blackGateImage =  pg.image.load(os.path.join("images", "blackGate.png")).convert_alpha()
         self.purpleGateImage =  pg.image.load(os.path.join("images", "purpleGate.png")).convert_alpha()
 
+        #Sound effects
         self.shootSound = pg.mixer.Sound(settings.SOUND_SHOOT)
         self.playerDeathSound = pg.mixer.Sound(settings.SOUND_PLAYER_DEATH)
         self.mobDeathSound = pg.mixer.Sound(settings.SOUND_MOB_DEATH)
 
+        #Music
+        pg.mixer.music.load(settings.MUSIC_TITLE_SCREEN)
+        pg.mixer.music.play(-1)
+
         self.onTitleScreen = True
+
+        self.endMusicPlaying = False #Prevent starting the end track over and over.
 
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
@@ -203,6 +210,10 @@ class Game:
         self.all_sprites.add(self.mapTextSprite)
         self.HUD_sprites.add(self.mapTextSprite)
 
+        pg.mixer.music.stop()
+        pg.mixer.music.load(settings.MUSIC_AREA1)
+        pg.mixer.music.play(-1)
+
     def input(self):
         #Loop through all sprites that take input and scan for input.
         for sprite in self.input_sprites:
@@ -210,7 +221,7 @@ class Game:
         pass
     def update(self):
         #run update function of all sprites
-        
+
         if self.current_map.fog:
             self.visible_sprites.empty()
             for sprite in self.all_sprites:
@@ -230,6 +241,13 @@ class Game:
             self.background_sprites.add(fr) #Add to effect_sprites group
 
         self.check_map_transitions()
+
+        #Play end music when on the last map.
+        if self.current_map == self.map1_end and not self.endMusicPlaying: #Prevent end track from starting over and over.
+            pg.mixer.music.stop()
+            pg.mixer.music.load(settings.MUSIC_END)
+            pg.mixer.music.play(-1)
+            self.endMusicPlaying = True
 
     def draw(self):
         if self.current_map.fog:
