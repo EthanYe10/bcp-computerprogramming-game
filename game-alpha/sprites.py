@@ -239,7 +239,7 @@ class Player(pg.sprite.Sprite):
         if len(hits) > 0 and self.invincibilityCountdown < 0: #If any mob sprites were hit, damage was taken. If invincibilityCountdown is positive, invincibility is active.
             self.health -= 1 #Decrement health
             self.invincibilityCountdown = settings.PLAYER_DAMAGE_INCINCIBILITY_DURATION #Activate invincibility
-        
+            pg.mixer.Sound.play(self.game.playerHurtSound) #Play damage sound
         #Handle player invincibility and countdown
         self.invincibilityCountdown -= self.game.deltaTime #Tick down by delta time passed.
 

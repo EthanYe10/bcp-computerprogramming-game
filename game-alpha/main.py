@@ -22,6 +22,7 @@ class Game:
         self.shootSound = pg.mixer.Sound(settings.SOUND_SHOOT)
         self.playerDeathSound = pg.mixer.Sound(settings.SOUND_PLAYER_DEATH)
         self.mobDeathSound = pg.mixer.Sound(settings.SOUND_MOB_DEATH)
+        self.playerHurtSound = pg.mixer.Sound(settings.SOUND_PLAYER_DAMAGE)
 
         #Music
         pg.mixer.music.load(settings.MUSIC_TITLE_SCREEN)

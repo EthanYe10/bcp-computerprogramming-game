@@ -75,6 +75,7 @@ MAP_TEXT_SIZE = 24
 SOUND_SHOOT = "sounds/828859__jw_audio__lasrgun_synthetic-short-blast-fire-shot_05_jw-audio_simple-futuristic-guns-1.wav"
 SOUND_MOB_DEATH = "sounds/500303__bratish__plasmagun-fire.wav"
 SOUND_PLAYER_DEATH = "sounds/35458__jobro__explosion-1.wav"
+SOUND_PLAYER_DAMAGE = "sounds/832721__jw_audio__dsgnrythm_glitch-stutter-one-shot-pitched-chaotic-hard-digital_14_jw-audio.wav"
 
 MUSIC_TITLE_SCREEN = "music/456100__burghrecords__cinematic-ambiance-futuristic-background.wav"
 MUSIC_AREA1 = "music/Industrial Cyberpunk Music - Soma by Karl Casey __ Royalty Free Dark Synthwave.mp3"
