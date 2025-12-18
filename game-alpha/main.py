@@ -25,7 +25,7 @@ class Game:
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
 
-        #Area 1
+        #Define Area 1 maps and connections
         self.map1_1_1 = utils.Map(os.path.join("maps", "map1_1_1.txt"), self, fog=False, text = "Welcome. This gate requires a yellow key to open. WASD keys to move.", textX=90)
         self.map1_2_1 = utils.Map(os.path.join("maps", "map1_2_1.txt"), self, fog=False, text="Press E to pick up items (This key is not yellow)",textX=220,textY=100)
         self.map1_1_2 = utils.Map(os.path.join("maps", "map1_1_2.txt"), self, fog=False, text="Space key to fire (If holding weapon)",textX=230,)
@@ -39,7 +39,8 @@ class Game:
         self.map1_3_2 = utils.Map(os.path.join("maps", "map1_3_2.txt"), self, fog=False, text="You can only hold two items at once.", textY = 450)
         self.map1_0_5 = utils.Map(os.path.join("maps", "map1_0_5.txt"), self, fog=False)
         self.map1_0_2 = utils.Map(os.path.join("maps", "map1_0_2.txt"), self, fog=False, text = "R to drop held item. Q to swap to other stored item.")
-
+        self.map1_end = utils.Map(os.path.join("maps", "map1_end.txt"), self, fog=False, text = "You've Reached The End! Congratulations!", textX=220)
+        
         self.map_manager.add_map(self.map1_1_1)
         self.map_manager.add_map(self.map1_2_1)
         self.map_manager.add_map(self.map1_1_2)
@@ -103,7 +104,9 @@ class Game:
         self.map_manager.add_connection(utils.MapConnection(self.map1_3_2, self.map1_1_2, *settings.GENERIC_DOOR_LEFT))
         self.map_manager.add_connection(utils.MapConnection(self.map1_0_4, self.map1_0_5, *settings.GENERIC_DOOR_UP))
         self.map_manager.add_connection(utils.MapConnection(self.map1_1_2, self.map1_0_2, *settings.GENERIC_DOOR_LEFT))
-        
+        self.map_manager.add_connection(utils.MapConnection(self.map1_1_2, self.map1_0_2, *settings.GENERIC_DOOR_LEFT))
+        self.map_manager.add_connection(utils.MapConnection(self.map1_1_1, self.map1_end, *settings.GENERIC_DOOR_DOWN))
+
         #Using tuples that are unpacked and used as parameters for brevity.
         """
         in this example the door will be at (0,0) to (10,10) on the first map and (0,0) to (10,10) on the second map
