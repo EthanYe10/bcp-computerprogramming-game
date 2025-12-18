@@ -71,3 +71,7 @@ GENERIC_DOOR_DOWN = 0, 18, 24, 18, 0, 0, 24, 0, DIRECTION_DOWN
 BACKGROUND_SPRITE_COUNT = 200
 
 MAP_TEXT_SIZE = 24
+
+SOUND_SHOOT = "sounds/828859__jw_audio__lasrgun_synthetic-short-blast-fire-shot_05_jw-audio_simple-futuristic-guns-1.wav"
+SOUND_MOB_DEATH = "sounds/500303__bratish__plasmagun-fire.wav"
+SOUND_PLAYER_DEATH = "sounds/35458__jobro__explosion-1.wav"

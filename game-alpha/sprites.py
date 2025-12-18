@@ -28,10 +28,14 @@ class Player(pg.sprite.Sprite):
         self.health = settings.PLAYER_START_HEALTH #Player health. decrements each time an enemy touches player.
         self.invincibilityCountdown = 0 #While positive, player is invulnerable. Set to  
 
+        self.lastShotCountDown = 0
+
         #These make sure the actions associated with each key only happen once per press, not autofire while held.
         self.Epressed = False
         self.Rpressed = False
         self.Qpressed = False
+
+        self.lastShotCountDown = 0 #Counts up time since last shot
 
     def getHeldItem(self):
         for i, sprite in enumerate(self.inventory): #enumerate items in inventory
@@ -101,6 +105,11 @@ class Player(pg.sprite.Sprite):
                     p = Projectile(self.game, self.vel, settings.WHITE, 15, 2, self.rect.x, self.rect.y, 5, 1)
                     self.game.all_sprites.add(p)
                     self.game.projectile_sprites.add(p)
+
+                    #Play shoot sound only every 10th of a second to avoid clogging up all channels, preventing other sounds from playing.
+                    if self.lastShotCountDown > 0.1:
+                        pg.mixer.Sound.play(self.game.shootSound)
+                        self.lastShotCountDown = 0
 
     def wallCollide_x(self):
         #Code by Ethan Ye paraphrased from cozort. Copied in, edited by Matthew
@@ -190,6 +199,8 @@ class Player(pg.sprite.Sprite):
 
         self.kill()
 
+        pg.mixer.Sound.play(self.game.playerDeathSound)
+
     def update(self):
         #Move based on self.vel vector based on input
 
@@ -241,6 +252,7 @@ class Player(pg.sprite.Sprite):
         if self.health <= 0:
             self.die()
 
+        self.lastShotCountDown += self.game.deltaTime
 
 class HealthMeter(pg.sprite.Sprite):
     def __init__(self, game):
@@ -355,6 +367,8 @@ class Mob(pg.sprite.Sprite):
         self.game.effect_sprites.add(fr) #Add to effect_sprites group
 
         self.kill()
+
+        pg.mixer.Sound.play(self.game.mobDeathSound)
 
     def update(self):
         #print(self.rect.x, self.rect.y) Print for debug

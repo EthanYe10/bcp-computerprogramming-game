@@ -18,6 +18,10 @@ class Game:
         self.blackGateImage =  pg.image.load(os.path.join("images", "blackGate.png")).convert_alpha()
         self.purpleGateImage =  pg.image.load(os.path.join("images", "purpleGate.png")).convert_alpha()
 
+        self.shootSound = pg.mixer.Sound(settings.SOUND_SHOOT)
+        self.playerDeathSound = pg.mixer.Sound(settings.SOUND_PLAYER_DEATH)
+        self.mobDeathSound = pg.mixer.Sound(settings.SOUND_MOB_DEATH)
+
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
 
