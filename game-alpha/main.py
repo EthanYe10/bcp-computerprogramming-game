@@ -22,19 +22,19 @@ class Game:
         self.map_manager: utils.MapManager = utils.MapManager(self)
 
         #Area 1
-        self.map1_1_1 = utils.Map(os.path.join("maps", "map1_1_1.txt"), self, fog=False)
-        self.map1_2_1 = utils.Map(os.path.join("maps", "map1_2_1.txt"), self, fog=False)
-        self.map1_1_2 = utils.Map(os.path.join("maps", "map1_1_2.txt"), self, fog=False)
-        self.map1_1_3 = utils.Map(os.path.join("maps", "map1_1_3.txt"), self, fog=False)
+        self.map1_1_1 = utils.Map(os.path.join("maps", "map1_1_1.txt"), self, fog=False, text = "Welcome. This gate requires a yellow key to open. WASD keys to move.", textX=90)
+        self.map1_2_1 = utils.Map(os.path.join("maps", "map1_2_1.txt"), self, fog=False, text="Press E to pick up items (This key is not yellow)",textX=220,textY=100)
+        self.map1_1_2 = utils.Map(os.path.join("maps", "map1_1_2.txt"), self, fog=False, text="Space key to fire (If holding weapon)",textX=230,)
+        self.map1_1_3 = utils.Map(os.path.join("maps", "map1_1_3.txt"), self, fog=False, text = "The \"cross\" on the bottom right of you is a health meter.",textX=115)
         self.map1_0_4 = utils.Map(os.path.join("maps", "map1_0_4.txt"), self, fog=False)
         self.map1_1_4 = utils.Map(os.path.join("maps", "map1_1_4.txt"), self, fog=False)
         self.map1_2_4 = utils.Map(os.path.join("maps", "map1_2_4.txt"), self, fog=False)
         self.map1_2_5 = utils.Map(os.path.join("maps", "map1_2_5.txt"), self, fog=False)
         self.map1_2_6 = utils.Map(os.path.join("maps", "map1_2_6.txt"), self, fog=False)
         self.map1_3_5 = utils.Map(os.path.join("maps", "map1_3_5.txt"), self, fog=False)
-        self.map1_3_2 = utils.Map(os.path.join("maps", "map1_3_2.txt"), self, fog=False)
+        self.map1_3_2 = utils.Map(os.path.join("maps", "map1_3_2.txt"), self, fog=False, text="You can only hold two items at once.", textY = 450)
         self.map1_0_5 = utils.Map(os.path.join("maps", "map1_0_5.txt"), self, fog=False)
-        self.map1_0_2 = utils.Map(os.path.join("maps", "map1_0_2.txt"), self, fog=False)
+        self.map1_0_2 = utils.Map(os.path.join("maps", "map1_0_2.txt"), self, fog=False, text = "R to drop held item. Q to swap to other stored item.")
 
         self.map_manager.add_map(self.map1_1_1)
         self.map_manager.add_map(self.map1_2_1)
@@ -182,6 +182,11 @@ class Game:
         healthMeter = HealthMeter(self)
         self.HUD_sprites.add(healthMeter)
         self.all_sprites.add(healthMeter)
+
+        #Instantiate the object that draws the map text.
+        self.mapTextSprite = MapText(self)
+        self.all_sprites.add(self.mapTextSprite)
+        self.HUD_sprites.add(self.mapTextSprite)
     def input(self):
         #Loop through all sprites that take input and scan for input.
         for sprite in self.input_sprites:

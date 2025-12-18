@@ -8,7 +8,7 @@ class Map:
     other portions paraphrased by various sources by Ethan Ye"""
     
     # initialize map object from text file
-    def __init__(self, filename, game, fog=False):
+    def __init__(self, filename, game, fog=False, text = "", textX = 300, textY = 300):
         self.filename = filename
         self.game = game
         # data is list of strings
@@ -27,6 +27,10 @@ class Map:
             self.tileheight = len(self.data)
             self.width = self.tilewidth * 32
             self.height = self.tileheight * 32
+
+            self.text = text
+            self.textX = textX
+            self.textY = textY
     
     def find_tile(self, tile_char):
         for i in range(len(self.data)):
@@ -34,9 +38,6 @@ class Map:
                 if self.data[i][j] == tile_char:
                     return (i, j)
         return None
-
-    
-                
 
 class MapConnection:
     """class MapConnection

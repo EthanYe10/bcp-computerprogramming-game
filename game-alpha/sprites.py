@@ -383,8 +383,30 @@ class Mob(pg.sprite.Sprite):
         if self.health < 0:
             self.die()
 
+#Draws the text called by the map.
+class MapText(pg.sprite.Sprite):
+    def __init__(self, game):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT), pg.SRCALPHA) #pg.SRCALPHA allows there to be an alpha channel in the image
+        self.image.fill(settings.TRANSPARANT) #Base color
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (0, 0) #Top left of screen
+
+        #The sprite is the size of whole screen
+
+        self.font = pg.font.Font("fonts/Geo-Regular.ttf", settings.MAP_TEXT_SIZE) #Load the game's font
+
+        self.game = game #game object reference.
+
+    def update(self):
+        self.image = self.font.render(self.game.current_map.text, False, settings.WHITE) #Draw the text
+        #Anti-aliasing is off to preserve that retro look
+
+        self.rect.x = self.game.current_map.textX
+        self.rect.y = self.game.current_map.textY
+
 #Fading rectangle
-class FadeRect(pg.sprite.Sprite):
+class FadeRect(pg.sprite.Sprite):   
     """FadeRect class
     Author: Matthew Sheyda
     TODO: short description
