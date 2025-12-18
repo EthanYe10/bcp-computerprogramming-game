@@ -256,6 +256,7 @@ class Player(pg.sprite.Sprite):
         self.lastShotCountDown += self.game.deltaTime
 
 class TitleScreen(pg.sprite.Sprite):
+    #Coded by Matthew Sheyda
     def __init__(self, game):
         pg.sprite.Sprite.__init__(self)
         #Just a big sprite that covers the whole screen until the player starts the game.
