@@ -204,13 +204,14 @@ class Player(pg.sprite.Sprite):
     def update(self):
         #Move based on self.vel vector based on input
 
-        #Handle movement and collision on x axis
-        self.rect.x += self.vel.x
-        self.wallCollide_x()
+        if not self.game.onTitleScreen: #Prevent movement if on title screen.
+            #Handle movement and collision on x axis
+            self.rect.x += self.vel.x
+            self.wallCollide_x()
 
-        #Handle movement and collision on y axis
-        self.rect.y += self.vel.y
-        self.wallCollide_y()
+            #Handle movement and collision on y axis
+            self.rect.y += self.vel.y
+            self.wallCollide_y()
 
         #print(self.rect.x, self.rect.y)
         # print("Inventory: Length:", len(self.inventory), "Current:", self.currentItem)
@@ -253,6 +254,73 @@ class Player(pg.sprite.Sprite):
             self.die()
 
         self.lastShotCountDown += self.game.deltaTime
+
+class TitleScreen(pg.sprite.Sprite):
+    def __init__(self, game):
+        pg.sprite.Sprite.__init__(self)
+        #Just a big sprite that covers the whole screen until the player starts the game.
+        self.image = pg.Surface((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT))
+        self.image.fill(settings.BLUE) 
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (0, 0)
+
+        #This is where the text is rendered to, before being blitted at a specific location to the sprite's image.
+        self.textSurface = pg.Surface((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT), pg.SRCALPHA) #pg.SRCALPHA allows there to be an alpha channel in the image
+        self.textSurface.fill(settings.TRANSPARANT) #Base color
+
+        #Font (Same font of different sizes) to draw text with
+        self.titleFont = pg.font.Font("fonts/Geo-Regular.ttf", 67) 
+        self.infoFont = pg.font.Font("fonts/Geo-Regular.ttf", 24)
+
+        #Stored variables for future processes
+        self.drawLocation = pg.Rect(0,0,1000,1000)
+        self.timeToImageClear = 0
+
+        self.game = game
+    def update(self):
+        #Render the game title onto textSurface
+        self.textSurface = self.titleFont.render("ODYSSEY", False, settings.WHITE) #Draw the text
+
+        #Copy the rendering text onto the sprite image at a specific location
+        self.image.blit(self.textSurface, self.drawLocation, special_flags=pg.BLEND_RGBA_ADD) 
+
+        #scroll text:
+        self.drawLocation.y += 1
+
+        #Draw credit text and info using the same steps.
+
+        #First line:
+        self.textSurface = self.infoFont.render("Programmed by Matthew Sheyda and Ethan Ye.", False, settings.WHITE)
+        infoTextRect = pg.Rect(300,350,1000,1000)
+        self.image.blit(self.textSurface, infoTextRect, special_flags=pg.BLEND_RGBA_ADD) 
+
+        #Second line:
+        self.textSurface = self.infoFont.render("Credits in files.", False, settings.WHITE)
+        infoTextRect = pg.Rect(300,400,1000,1000)
+        self.image.blit(self.textSurface, infoTextRect, special_flags=pg.BLEND_RGBA_ADD) 
+
+        #Last line:
+        self.textSurface = self.infoFont.render("Press ENTER to start.", False, settings.WHITE)
+        infoTextRect = pg.Rect(300,450,1000,1000)
+        self.image.blit(self.textSurface, infoTextRect, special_flags=pg.BLEND_RGBA_ADD) 
+
+        #Clear text periodically to make the game title occasionally readable.
+        if self.timeToImageClear < 0:
+            self.image.fill(settings.BLUE)
+            self.timeToImageClear = random.randint(1,5)
+        
+        self.timeToImageClear -= self.game.deltaTime
+
+        #Boost draw location y to top if below window.
+        if self.drawLocation.y > settings.WINDOW_HEIGHT:
+            self.drawLocation.y = 0
+
+        #End title screen when Enter is pressed
+        keystate = pg.key.get_pressed() #Get currently pressed keys
+        if keystate[pg.K_RETURN]: #Check if w is pressed. Walk up.
+            self.game.onTitleScreen = False
+            self.game.gameStart()
+            self.kill()
 
 class HealthMeter(pg.sprite.Sprite):
     def __init__(self, game):

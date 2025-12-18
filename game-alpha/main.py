@@ -22,6 +22,8 @@ class Game:
         self.playerDeathSound = pg.mixer.Sound(settings.SOUND_PLAYER_DEATH)
         self.mobDeathSound = pg.mixer.Sound(settings.SOUND_MOB_DEATH)
 
+        self.onTitleScreen = True
+
     def new(self): #Create a new game, sprites, and maps. 
         self.map_manager: utils.MapManager = utils.MapManager(self)
 
@@ -135,11 +137,6 @@ class Game:
 
         self.background_sprites = pg.sprite.Group()
 
-        #Instantiate Player, add to sprite groups.
-        self.player = Player(self, 200, 200) #Store player reference for later access
-        self.input_sprites.add(self.player)
-        self.all_sprites.add(self.player)
-
         #Create delta time and pg.Clock attributes.
         self.deltaTime = 0
         g.clock = pg.time.Clock()
@@ -185,6 +182,17 @@ class Game:
         self.all_sprites.add(itm)
         self.item_sprites.add(itm)
 
+        #Instantiate title screen
+        ts = TitleScreen(self) #(ts because ts so cooked)
+        self.HUD_sprites.add(ts)
+        self.all_sprites.add(ts)
+
+        #Instantiate Player, add to sprite groups.
+        self.player = Player(self, 200, 200) #Store player reference for later access
+        self.input_sprites.add(self.player)
+        self.all_sprites.add(self.player)
+
+    def gameStart(self): #Run after the title screen.
         #Instantiate health meter
         healthMeter = HealthMeter(self)
         self.HUD_sprites.add(healthMeter)
@@ -194,6 +202,7 @@ class Game:
         self.mapTextSprite = MapText(self)
         self.all_sprites.add(self.mapTextSprite)
         self.HUD_sprites.add(self.mapTextSprite)
+
     def input(self):
         #Loop through all sprites that take input and scan for input.
         for sprite in self.input_sprites:
